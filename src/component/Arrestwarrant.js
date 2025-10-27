@@ -35,8 +35,14 @@ const ArrestWarrantDocument = ({ data }) => {
 
     // Descriptive name for the Warrant Type
     const descriptiveWarrantType = data.warrantType === 'B.W.' 
-        ? 'Bailable Warrant (जामीनपात्र वॉरंट)' 
-        : 'Non Bailable Warrant (अजामीनपात्र वॉरंट)';
+        ? 'Bailable Warrant (जामीनपात्र अधिपत्र)' 
+        : 'Non Bailable Warrant (अजामीनपात्र अधिपत्र)';
+        
+    // *** NEW: Combine Act and Section for the document's offense section ***
+    const offenseDetail = data.act && data.section 
+        ? `${data.act} कलम ${data.section}` 
+        : data.act || data.section || '...................';
+    // **********************************************************************
 
     return (
         <div className="printable-area" id="print-warrant-content">
@@ -46,9 +52,9 @@ const ArrestWarrantDocument = ({ data }) => {
                 <p className="align-center court-title" style={{fontSize:"18px", fontWeight: 'bold', marginBottom: '5px'}}>
                     <span className="data-placeholder">{data.courtName}</span>
                 </p>
-                <h3 className="align-center court-slogan" style={{fontSize:"20px", marginTop: '5px', marginBottom: '5px', textDecoration: 'underline'}}>
+                {/* <h3 className="align-center court-slogan" style={{fontSize:"20px", marginTop: '5px', marginBottom: '5px', textDecoration: 'underline'}}>
                     पकडण्याचा वॉरंट
-                </h3>
+                </h3> */}
                 
                 {/* Warrant Type and Case Type Display */}
                 <div style={{ marginBottom: '15px', width: '100%', lineHeight: '1.2', textAlign:"center" }}>
@@ -79,10 +85,12 @@ const ArrestWarrantDocument = ({ data }) => {
                 <div style={{ marginTop: '20px', textAlign: 'justify' }}>
                     
                     <p className="warrant-paragraph" style={{ marginBottom: '15px' }}>
-                        ज्यापेक्षा <span className="data-placeholder bold-text">{data.accusedName}</span> राह. 
+                        ज्यापेक्षा आरोपी नामे <span className="data-placeholder bold-text">{data.accusedName}</span> राह. 
                         <span className="data-placeholder bold-text">{data.accusedAddress}</span> यावर 
-                        <span className="data-placeholder bold-text">{data.offenseSection}</span> या अपराधाचा आरोप आलेला आहे, 
-                        त्यापेक्षा तुम्ही सदरहू <span className="data-placeholder bold-text">{data.accusedName}</span> यास धरून माझ्यापुढे आणावे असा तुम्हास या वॉरंटद्वारे हुकूम केला आहे. 
+                        {/* *** UPDATED OFFENSE SECTION *** */}
+                        <span className="data-placeholder bold-text">{offenseDetail}</span> या अपराधाचा आरोप आलेला आहे, 
+                        {/* ******************************* */}
+                                 त्यापेक्षा तुम्ही सदरहू आरोपी<span className="data-placeholder bold-text">{data.accusedName}</span> यास धरून माझ्यापुढे आणावे असा तुम्हास या वॉरंटद्वारे हुकूम केला आहे. 
                         यात लिहिल्याप्रमाणे तुम्ही चुकू नये.
                     </p>
                     
@@ -118,7 +126,10 @@ const ArrestWarrantDocument = ({ data }) => {
                             न्यायदंडाधिकारी प्रथम वर्ग,
                         </p>
                         <p style={{marginBottom: '0', marginTop: '0', textAlign: 'center'}}>
-                            <span className="data-placeholder">{data.courtLocationFooter}</span> शहर.
+                            <span className="data-placeholder">{data.courtLocationFooter}</span> 
+                        </p>
+                        <p style={{marginBottom: '0', marginTop: '0', textAlign: 'center'}}>
+                            <span className="data-placeholder">{data.talukaDist}</span> 
                         </p>
                     </div>
                 </div>
@@ -132,9 +143,10 @@ const ArrestWarrantDocument = ({ data }) => {
 const ArrestWarrantApp = () => {
     const today = new Date().toISOString().substring(0, 10);
     
-    // Initial Data - Now includes explicit warrantType and caseType
+    // Initial Data - UPDATED to remove offenseSection and add act/section
     const initialData = {
-        courtName: 'न्यायदंडाधिकारी, प्रथम वर्ग, मनमाड शहर',
+        courtName: 'न्यायदंडाधिकारी, प्रथम वर्ग, मनमाड शहर ता.नांदगाव जिल्हा नाशिक ',
+        talukaDist:"ता.नांदगाव जिल्हा नाशिक",
         warrantType: '', // B.W. or N.B.W.
         caseType: '',     // RCC or SCC
         caseNo: '',
@@ -143,7 +155,9 @@ const ArrestWarrantApp = () => {
         policeStationDistrict: 'नाशिक',
         accusedName: '',
         accusedAddress: '',
-        offenseSection: '',
+        // Removed offenseSection
+        act: '',         // NEW: Act (e.g., IPC, BNS, etc.)
+        section: '',     // NEW: Section number/details
         appearanceDate: today,
         personalBondAmount: '', // Taran Amount
         suretyAmount1: '', // One Surety Amount
@@ -160,6 +174,11 @@ const ArrestWarrantApp = () => {
     };
     
     const handlePrint = () => {
+        // Simple check to prevent printing without mandatory fields
+        if (!data.warrantType || !data.caseType || !data.accusedName || !data.section) {
+            alert('Please fill in Warrant Type, Case Type, Accused Name, and Offense Section before printing.');
+            return;
+        }
         window.print();
     };
 
@@ -254,7 +273,7 @@ const ArrestWarrantApp = () => {
             box-sizing: border-box;
             transition: border-color 0.15s ease-in-out;
           }
-          .input-form input:focus {
+          .input-form input:focus, .input-form select:focus {
             border-color: #2563eb;
             outline: none;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
@@ -511,15 +530,37 @@ const ArrestWarrantApp = () => {
                             onChange={handleChange}
                         />
                     </label>
-                    <label style={{gridColumn: 'span 1'}}>
-                        गुन्हा/कलम (Offense/Section):
+                    
+                    {/* *** NEW INPUTS FOR ACT AND SECTION *** */}
+                    <label>
+                        गुन्हा कायदा (Act):
+                        <select
+                            name="act"
+                            value={data.act}
+                            onChange={handleChange}
+                        >
+                            <option value="">निवडा (Select)</option>
+                            <option value="IPC">IPC (भारतीय दंड संहिता)</option>
+                            <option value="CrPC">CrPC (फौजदारी प्रक्रिया संहिता)</option>
+                            <option value="BNS">BNS (भारतीय न्याय संहिता)</option>
+                            <option value="BNSS">BNSS (भारतीय नागरिक सुरक्षा संहिता)</option>
+                            <option value="NI">NI (Negotiable Instruments Act)</option>
+                             <option value="NI">Gambling Act</option>
+                             <option value="NI">Bombay Prohibition</option>
+                        </select>
+                    </label>
+                    <label>
+                        कलम क्रमांक (Section):
                         <input
                             type="text"
-                            name="offenseSection"
-                            value={data.offenseSection}
+                            name="section"
+                            value={data.section}
                             onChange={handleChange}
+                            placeholder="उदा. 302, 138"
                         />
                     </label>
+                    {/* *************************************** */}
+                    
                     <label>
                         पोलीस स्टेशनचे नांव (Police Station):
                         <input
