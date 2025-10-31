@@ -49,7 +49,7 @@ const ArrestWarrantDocument = ({ data }) => {
             <div className="warrant-document">
                 
                 {/* Court and Heading */}
-                <p className="align-center court-title" style={{fontSize:"18px", fontWeight: 'bold', marginBottom: '5px'}}>
+                <p className="align-center court-title" style={{fontSize:"20px", fontWeight: 'bold',textDecoration:"underline", marginBottom: '5px'}}>
                     <span className="data-placeholder">{data.courtName}</span>
                 </p>
                 {/* <h3 className="align-center court-slogan" style={{fontSize:"20px", marginTop: '5px', marginBottom: '5px', textDecoration: 'underline'}}>
@@ -61,13 +61,15 @@ const ArrestWarrantDocument = ({ data }) => {
                     <p style={{ margin: '0 0 2px 0', textAlign:"center",fontWeight: 'bold', fontSize: '1.1rem', color: data.warrantType === 'N.B.W.' ? '#880000' : '#006400' }} >
                         <span className="data-placeholder">{descriptiveWarrantType}</span>
                     </p>
-                    <p style={{ margin: '0', textAlign:"center",fontSize: '10pt', fontWeight: 'bold'}}>
-                        {data.caseType} खटला क्र. (Case No.): <span className="data-placeholder">{data.caseNo}</span>
-                    </p>
-                    <p style={{ margin: '0', fontSize: '10pt',textAlign:"center"}}>
+                     <p style={{ margin: '0', fontSize: '10pt',textAlign:"center"}}>
                         (क्रि. प्रो. को. क. ७५ पहा)
                     </p>
+                   
+                   
                 </div>
+                 <p style={{ margin: '0', textAlign:"right",fontSize: '12pt', fontWeight: 'bold'}}>
+                       Case No. &nbsp; {data.caseType}: <span className="data-placeholder">{data.caseNo}</span>
+                    </p>
 
                 {/* To: Police Inspector */}
                 <div style={{ marginTop: '10px', marginBottom: '10px', padding: '0 0mm' }}>
@@ -85,12 +87,12 @@ const ArrestWarrantDocument = ({ data }) => {
                 <div style={{ marginTop: '20px', textAlign: 'justify' }}>
                     
                     <p className="warrant-paragraph" style={{ marginBottom: '15px' }}>
-                        ज्यापेक्षा आरोपी नामे <span className="data-placeholder bold-text">{data.accusedName}</span> राह. 
-                        <span className="data-placeholder bold-text">{data.accusedAddress}</span> यावर 
+                       &nbsp;&nbsp;&nbsp; &nbsp; ज्यापेक्षा आरोपी नामे <span className="data-placeholder bold-text">{data.accusedName}</span> राह. 
+                        <span className="data-placeholder bold-text"> &nbsp;{data.accusedAddress} &nbsp;</span> यावर 
                         {/* *** UPDATED OFFENSE SECTION *** */}
-                        <span className="data-placeholder bold-text">{offenseDetail}</span> या अपराधाचा आरोप आलेला आहे, 
+                        <span className="data-placeholder bold-text"> &nbsp;{offenseDetail}</span>  &nbsp;या अपराधाचा आरोप आलेला आहे, 
                         {/* ******************************* */}
-                                 त्यापेक्षा तुम्ही सदरहू आरोपी<span className="data-placeholder bold-text">{data.accusedName}</span> यास धरून माझ्यापुढे आणावे असा तुम्हास या वॉरंटद्वारे हुकूम केला आहे. 
+                                 त्यापेक्षा तुम्ही सदरहू आरोपी<span className="data-placeholder bold-text"> &nbsp;&nbsp;{data.accusedName} &nbsp;&nbsp;</span> यास धरून माझ्यापुढे आणावे असा तुम्हास या वॉरंटद्वारे हुकूम केला आहे. 
                         यात लिहिल्याप्रमाणे तुम्ही चुकू नये.
                     </p>
                     
@@ -99,8 +101,8 @@ const ArrestWarrantDocument = ({ data }) => {
                         <div className="bail-clause" style={{ marginBottom: '15px', border: '1px dashed #ccc', padding: '10px', background: '#f9f9f9', borderRadius: '4px' }}>
                             <p style={{ fontWeight: 'bold', textDecoration: 'underline', margin: '0 0 5px 0'}}>जामीन सूचना (Bail Instruction):</p>
                             <p className="warrant-paragraph" style={{ margin: '0' }}>
-                                सदरहू <span className="data-placeholder bold-text">{data.accusedName}</span> जर तारीख <span className="data-placeholder bold-text">{formatDateToIndian(data.appearanceDate)}</span> सन 
-                                <span className="data-placeholder bold-text">{appearanceYear}</span> रोजी माझ्यापुढे हजर होण्याविषयी व मी अन्य रितीने हुकूम येईपर्यंत हजर होत राहतील 
+                              &nbsp;&nbsp;&nbsp; &nbsp;   सदरहू <span className="data-placeholder bold-text"> &nbsp;{data.accusedName} &nbsp;&nbsp;</span> जर तारीख <span className="data-placeholder bold-text">{formatDateToIndian(data.appearanceDate)}</span> 
+                                 &nbsp; रोजी माझ्यापुढे हजर होण्याविषयी व मी अन्य रितीने हुकूम येईपर्यंत हजर होत राहतील 
                                 याविषयी आपण स्वतः रु. <span className="data-placeholder bold-text">{data.personalBondAmount}</span> रकमेचे तारण लिहून देऊन 
                                 रु. <span className="data-placeholder bold-text">{data.suretyAmount1}</span> रकमेचा एक जामीन (अगर रु. <span className="data-placeholder bold-text">{data.suretyAmount2}</span> रकमेचा प्रत्येक असे दोन)
                                 द्याल, तर त्यास सोडून द्यावे.
@@ -122,7 +124,7 @@ const ArrestWarrantDocument = ({ data }) => {
                         paddingTop: '5px',
                         marginRight: '0px'
                     }}> 
-                        <p style={{marginBottom: '0', marginTop: '10px', textAlign: 'center', fontWeight: 'bold', textDecoration: 'underline'}}>
+                        <p style={{marginBottom: '0', marginTop: '10px', textAlign: 'center', fontWeight: 'bold', }}>
                             न्यायदंडाधिकारी प्रथम वर्ग,
                         </p>
                         <p style={{marginBottom: '0', marginTop: '0', textAlign: 'center'}}>
@@ -306,7 +308,7 @@ const ArrestWarrantApp = () => {
             min-height: 297mm; /* A4 height */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
             background-color: white;
-            padding: 12mm 12mm; 
+            padding: 45mm 25mm; 
             box-sizing: border-box;
             /* Use Devanagari friendly fonts */
             font-family: 'Lohit Devanagari', 'Arial Unicode MS', 'Mangal', sans-serif; 
@@ -392,7 +394,7 @@ const ArrestWarrantApp = () => {
               border: none !important; 
               box-shadow: none !important; 
               /* IMPORTANT: Use a minimal internal padding */
-              padding: 5mm 8mm !important; 
+              padding: 20mm 15mm !important; 
               font-size: 11pt; 
               line-height: 1.7; 
               font-family: 'Lohit Devanagari', 'Arial Unicode MS', 'Mangal', sans-serif;
