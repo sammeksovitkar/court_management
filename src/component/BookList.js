@@ -3,7 +3,7 @@
 import React from 'react';
 
 // 🔑 THE DISPLAY HEADERS
-const headers = ['Class', 'Book Name', 'Volume', 'Date', 'Book Price', 'Room', 'Kapat', 'other1'];
+const headers = ['Class', 'Book Name', 'Volume', 'Date', 'Price', 'Reader', 'Kapat', 'Writer'];
 const classOptions = ['All', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
 
 // 🔑 THE CRITICAL FIX: Explicit mapping from display header to the object's property key.
@@ -15,9 +15,9 @@ const dataKeyMap = {
     'Volume': 'Volume',
     'Date': 'Date',
     'Book Price': 'Book Price',  // ⬅️ Assuming your data key actually has a space
-    'Room': 'Room',
+    'Reader': 'Reader',
     'Kapat': 'Kapat',
-    'other1': 'other1',
+    'Writer': 'Writer',
     // IMPORTANT: If any of these are wrong (e.g., 'BookName' instead of 'Book Name'), change it here.
 };
 
