@@ -1,159 +1,273 @@
-// /frontend/src/Component/BookList.js
+// /frontend/src/BookForm.js
+import React, { useState } from 'react';
+import axios from 'axios';
 
-import React from 'react';
+// --- STYLES FOR ATTRACTIVENESS & MODAL (No Change) ---
+const MODAL_STYLE = {
+    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', display: 'flex',
+    justifyContent: 'center', alignItems: 'center', zIndex: 1000,
+};
 
-// 🔑 THE DISPLAY HEADERS
-const headers = ['Class', 'Book Name', 'Volume', 'Date', 'Price', 'Reader', 'Kapat', 'Writer'];
-const classOptions = ['All', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
+const FORM_CARD_STYLE = {
+    backgroundColor: '#fff', padding: '30px', borderRadius: '12px',
+    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)', width: '90%',
+    maxWidth: '700px', animation: 'fadeIn 0.3s ease-out',
+};
 
-// 🔑 THE CRITICAL FIX: Explicit mapping from display header to the object's property key.
-// Since your previous code (book[header]) worked, your data keys MUST match the headers exactly.
-// We are defining this map to ensure consistency when accessing data.
-const dataKeyMap = {
-    'Class': 'Class',
-    'Book Name': 'Book Name',    // ⬅️ Assuming your data key actually has a space
-    'Volume': 'Volume',
-    'Date': 'Date',
-    'Book Price': 'Book Price',  // ⬅️ Assuming your data key actually has a space
-    'Reader': 'Reader',
-    'Kapat': 'Kapat',
-    'Writer': 'Writer',
-    // IMPORTANT: If any of these are wrong (e.g., 'BookName' instead of 'Book Name'), change it here.
+const GRID_STYLE = {
+    display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '20px', marginBottom: '20px',
+};
+
+const FIELD_STYLE = {
+    width: '100%', padding: '10px', margin: '5px 0 10px 0', border: '1px solid #ccc',
+    borderRadius: '6px', boxSizing: 'border-box', transition: 'border-color 0.3s, box-shadow 0.3s',
+    WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none',
+    backgroundColor: '#fff', cursor: 'pointer',
+};
+
+const SELECT_CONTAINER_STYLE = {
+    position: 'relative',
+};
+
+const SUBMIT_BUTTON_STYLE = {
+    backgroundColor: '#007bff', color: 'white', border: 'none', padding: '12px',
+    borderRadius: '6px', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold',
+    transition: 'background-color 0.2s', marginTop: '10px',
 };
 
 
-const tableHeaderStyle = { padding: '10px', border: '1px solid #ddd', backgroundColor: '#f2f2f2', textAlign: 'left' };
-const tableCellStyle = { padding: '10px', border: '1px solid #ddd', fontSize: '14px' };
-
-const tableScrollContainerStyle = {
-    overflowX: 'auto', 
-    border: '1px solid #ddd', 
-    borderRadius: '8px',
-    maxHeight: '480px', 
-    overflowY: 'auto', 
+// --- BASE FIELDS & OPTIONS ---
+// 1. 🔑 UPDATED: Added 'Reader' field. 
+const BASE_INITIAL_STATE = {
+    'Class': '', 'SrNo': '', 'Book Name': '', 'Volume': '', 'Date': '', 
+    'Book Price': '', 'Room': '', 'Kapat': '', 'other1': '', 'Reader': ''
 };
 
+// 2. 🔑 OPTIONAL UPDATE: Decide if 'Reader' is required. Keeping it optional for now.
+const REQUIRED_FIELDS = ['Class', 'Book Name', 'Book Price'];
+const CLASS_OPTIONS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
 
-function BookList({ 
-    books, loading, searchTerm, setSearchTerm, handleSearch, handleImport, 
-    handleEditClick, handleDelete, selectedClass, setSelectedClass 
-}) {
-    
-    // --- HANDLER FOR CLASS CHANGE (Triggers parent filter logic) ---
-    const handleClassChange = (e) => {
-        const newClass = e.target.value;
-        setSelectedClass(newClass);
-        // This line is essential for applying the class filter
-        handleSearch(newClass, searchTerm); 
-    };
-    
-    // --- HANDLER FOR SEARCH TERM CHANGE (Triggers parent filter logic) ---
-    const handleSearchTermChange = (e) => {
-        const newSearchTerm = e.target.value;
-        setSearchTerm(newSearchTerm);
-        // This line is essential for applying the general search filter
-        handleSearch(selectedClass, newSearchTerm);
+
+// 🔑 DATE FORMATTING HELPER: Converts YYYY-MM-DD (input) to DD/MM/YYYY (backend)
+const formatDateForBackend = (dateString) => {
+    if (!dateString) return '';
+    const parts = dateString.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`; // DD/MM/YYYY
     }
+    return dateString;
+};
+
+// 🔑 DATE CONVERSION FOR EDIT: Converts DD/MM/YYYY (server) to YYYY-MM-DD (date input)
+const formatDateForInput = (dateString) => {
+    if (!dateString || !dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) return '';
+    const parts = dateString.split('/');
+    return `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD
+};
+
+
+// --- CORE BOOK FORM COMPONENT (Unified for Add & Edit) ---
+export function BookForm({ initialBook = null, onBookAdded, onClose, onBookUpdated }) {
+    
+    // Determine initial state: load book data for edit, or use empty state for add
+    const initialState = initialBook 
+        ? { 
+            // 3. 🔑 UPDATED: BASE_INITIAL_STATE now includes 'Reader', so it's initialized correctly.
+            ...BASE_INITIAL_STATE, 
+            ...initialBook, 
+            // 🔑 Ensure Date is correctly converted for the date input type
+            'Date': formatDateForInput(initialBook['Date']) 
+        }
+        : BASE_INITIAL_STATE;
+
+    const [formData, setFormData] = useState(initialState);
+    const [message, setMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const isEditMode = initialBook !== null;
+    const formTitle = isEditMode ? `✏️ Edit Book (SrNo: ${initialBook.SrNo})` : '📚 Add New Library Book';
+    const submitButtonText = isEditMode ? 'Save Changes' : 'Add Book to Library';
+    const api = process.env.REACT_APP_BACKEND_URL
+
+    const handleChange = (e) => {
+        // Ensure numbers are stored as strings if the input type is text/date, 
+        // but since you use type="number" for Volume/Price, storing as number is fine.
+        const value = e.target.type === 'number' ? parseFloat(e.target.value) : e.target.value;
+        setFormData({ ...formData, [e.target.name]: value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        // Manual validation
+        const missing = REQUIRED_FIELDS.filter(field => !formData[field]);
+        if (missing.length) {
+            setMessage(`❌ Missing required fields: ${missing.join(', ')}`);
+            return;
+        }
+
+        setIsSubmitting(true);
+        setMessage(isEditMode ? 'Updating book...' : 'Adding book...');
+        
+        // Prepare data: Convert date format for backend
+        const dataToSend = { ...formData };
+        if (dataToSend['Date']) {
+            dataToSend['Date'] = formatDateForBackend(dataToSend['Date']);
+        }
+        
+        try {
+            if (isEditMode) {
+                // EDIT: PUT request
+                // 🔑 Use the SrNo stored in formData (which comes from initialBook)
+                await axios.put(api+`/api/books/${formData.SrNo}`, dataToSend);
+                setMessage('✅ Book updated successfully!');
+                onBookUpdated(); 
+            } else {
+                // ADD: POST request
+                delete dataToSend['SrNo']; // Ensure SrNo is not sent for a new book
+                await axios.post(api+`/api/books`, dataToSend);
+                setMessage('✅ Book added successfully!');
+                setFormData(BASE_INITIAL_STATE); // Reset form
+                onBookAdded(); 
+            }
+            
+            setTimeout(onClose, 1000);
+
+        } catch (error) {
+            // Server error suggests a problem with the PUT data format or backend logic.
+            setMessage(`❌ Error: ${error.response?.data?.message || 'Server error. Check backend logs for detailed error.'}`);
+            console.error('Submission error:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
-        <div style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-            <h2 style={{ color: '#333' }}>📚 Book Inventory ({books.length} Books)</h2>
-            
-            {/* Search and Action Bar */}
-            <div style={{ marginBottom: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
-                
-                {/* Class Selector */}
-                <select
-                    value={selectedClass}
-                    onChange={handleClassChange}
-                    style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
-                >
-                    {classOptions.map(cls => (
-                        <option key={cls} value={cls}>{cls === 'All' ? 'All Classes' : `Class ${cls}`}</option>
-                    ))}
-                </select>
-
-                {/* General Search Input */}
-                <input
-                    type="text"
-                    placeholder="Search by name, SrNo, etc."
-                    value={searchTerm}
-                    onChange={handleSearchTermChange}
-                    style={{ padding: '10px', flexGrow: 1, minWidth: '200px', border: '1px solid #ccc', borderRadius: '5px' }}
-                />
-                
-                {/* Filter and Import Buttons */}
+        <div style={FORM_CARD_STYLE}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eee', paddingBottom: '15px', marginBottom: '20px' }}>
+                <h2 style={{ margin: 0, color: '#333' }}>{formTitle}</h2>
                 <button 
-                    onClick={() => { setSelectedClass('All'); setSearchTerm(''); handleSearch('All', ''); }} 
-                    style={{ padding: '10px 20px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+                    onClick={onClose} 
+                    style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#aaa' }}
+                    aria-label="Close Modal"
                 >
-                    Clear Filter
-                </button>
-                <button 
-                    onClick={handleImport} 
-                    style={{ padding: '10px 20px', backgroundColor: 'teal', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-                >
-                    Upload/Import
+                    &times;
                 </button>
             </div>
+            
+            <form onSubmit={handleSubmit}>
+                <div style={GRID_STYLE}>
+                    {/* Iterate over BASE_INITIAL_STATE keys (which includes SrNo, and now Reader) */}
+                    {Object.keys(BASE_INITIAL_STATE).map((key) => {
+                        // 🔑 SrNo is skipped in Add mode, but included in Edit mode
+                        if (key === 'SrNo' && !isEditMode) return null; 
 
-            {loading ? (
-                <p style={{ textAlign: 'center', fontSize: '1.2em', padding: '30px' }}>Loading books... Please wait.</p>
-            ) : (
-                <div style={tableScrollContainerStyle}> 
-                    <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white' }}>
-                        <thead>
-                            <tr style={{ backgroundColor: '#f1f8ff' }}>
-                                {/* Fixed table headers */}
-                                <th style={{...tableHeaderStyle, width: '50px', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#f1f8ff'}}>Sl. No.</th>
-                                {headers.map(header => (
-                                    <th key={header} style={{...tableHeaderStyle, position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#f1f8ff'}}>{header}</th>
-                                ))}
-                                <th style={{ ...tableHeaderStyle, width: '150px', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#f1f8ff' }}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {books.map((book, index) => (
-                                <tr key={index} style={{ borderBottom: '1px solid #eee', transition: 'background-color 0.2s' }}>
-                                    <td style={{...tableCellStyle, textAlign: 'center'}}>{index + 1}</td> 
-                                    {/* 🔑 THE FIX: Use the map to reliably access data keys, which we assume match the headers */}
-                                    {headers.map(header => {
-                                        const dataKey = dataKeyMap[header]; // Get the actual key from the map
-                                        return (
-                                            <td key={header} style={tableCellStyle}>
-                                                {book[dataKey]}
-                                            </td>
-                                        );
-                                    })}
-                                    <td style={{ ...tableCellStyle, width: '150px' }}>
-                                        <button 
-                                            onClick={() => handleEditClick(book)}
-                                            style={{ padding: '5px 10px', marginRight: '5px', backgroundColor: '#ffc107', color: 'black', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                        const isRequired = REQUIRED_FIELDS.includes(key);
+
+                        return (
+                            <div key={key}>
+                                <label htmlFor={key} style={{ display: 'block', fontWeight: '600', marginBottom: '3px' }}>
+                                    {key} {!isRequired && <span style={{ color: '#888' }}>(Optional)</span>} {isRequired && <span style={{ color: 'red' }}>*</span>}:
+                                </label>
+
+                                {/* --- CLASS SELECTOR --- */}
+                                {key === 'Class' ? (
+                                    <div style={SELECT_CONTAINER_STYLE}>
+                                        <select
+                                            id={key}
+                                            name={key}
+                                            value={formData[key]}
+                                            onChange={handleChange}
+                                            required={isRequired}
+                                            style={FIELD_STYLE}
+                                            disabled={isSubmitting}
                                         >
-                                            ✏️ 
-                                        </button>
-                                        <button 
-                                            onClick={() => handleDelete(book.SrNo)}
-                                            style={{ padding: '5px 10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                                        >
-                                            🗑️ 
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                            {!books.length && (
-                                <tr>
-                                    <td colSpan={headers.length + 2} style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
-                                        No books found matching your criteria.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                            <option value="" disabled>Select Class</option>
+                                            {CLASS_OPTIONS.map(cls => (
+                                                <option key={cls} value={cls}>Class {cls}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                ) : (
+                                    /* --- DEFAULT INPUTS (including 'Reader') --- */
+                                    <input
+                                        type={
+                                            key === 'Volume' || key === 'Book Price' || key === 'SrNo' ? 'number' : 
+                                            (key === 'Date' ? 'date' : 'text')
+                                        }
+                                        id={key}
+                                        name={key}
+                                        value={formData[key] || ''}
+                                        onChange={handleChange}
+                                        required={isRequired}
+                                        // 🔑 Set SrNo as readOnly in Edit mode
+                                        readOnly={key === 'SrNo'} 
+                                        style={{ 
+                                            ...FIELD_STYLE, 
+                                            backgroundColor: key === 'SrNo' ? '#eee' : FIELD_STYLE.backgroundColor 
+                                        }}
+                                        placeholder={`Enter ${key}`}
+                                        disabled={isSubmitting}
+                                    />
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
-            )}
+                
+                <button 
+                    type="submit" 
+                    style={{...SUBMIT_BUTTON_STYLE, opacity: isSubmitting ? 0.7 : 1}} 
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? 'Processing...' : submitButtonText}
+                </button>
+                <p style={{ textAlign: 'center', marginTop: '15px', fontWeight: 'bold' }}>
+                    {message}
+                </p>
+            </form>
         </div>
     );
 }
 
-export default BookList;
+// --- MODAL WRAPPER COMPONENT (No Change) ---
+
+export function AddBookButton({ onBookAdded }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    return (
+        <>
+            <button 
+                onClick={() => setIsModalOpen(true)}
+                style={{
+                    padding: '15px 30px',
+                    fontSize: '18px',
+                    backgroundColor: '#28a745', 
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    margin: '20px auto',
+                    display: 'block',
+                    boxShadow: '0 4px 10px rgba(40, 167, 69, 0.4)',
+                }}
+            >
+                ➕ Click to Add New Book
+            </button>
+
+            {isModalOpen && (
+                <div style={MODAL_STYLE}>
+                    <BookForm 
+                        onBookAdded={onBookAdded} 
+                        onClose={() => setIsModalOpen(false)} 
+                    />
+                </div>
+            )}
+        </>
+    );
+}
+
+export default BookForm;
