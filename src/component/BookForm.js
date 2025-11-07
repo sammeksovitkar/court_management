@@ -47,7 +47,7 @@ const BASE_INITIAL_STATE = {
 
 // 2. 🔑 OPTIONAL UPDATE: Decide if 'Reader' is required. Keeping it optional for now.
 const REQUIRED_FIELDS = ['Class', 'Book Name', 'Book Price'];
-const CLASS_OPTIONS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
+const CLASS_OPTIONS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII(A)','VII(B)','VII(C)'];
 
 
 // 🔑 DATE FORMATTING HELPER: Converts YYYY-MM-DD (input) to DD/MM/YYYY (backend)
