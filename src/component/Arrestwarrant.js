@@ -97,7 +97,7 @@ const ArrestWarrantDocument = ({ data }) => {
                     </p>
                     
                     {/* Conditional Bail/Surety Clause (Only for Bailable Warrant) */}
-                    {data.warrantType === 'B.W.' && (
+                    {/* {data.warrantType === 'B.W.' && ( */}
                         <div className="bail-clause" style={{ marginBottom: '15px', border: '1px dashed #ccc', padding: '10px', background: '#f9f9f9', borderRadius: '4px' }}>
                             <p style={{ fontWeight: 'bold', textDecoration: 'underline', margin: '0 0 5px 0'}}>जामीन सूचना (Bail Instruction):</p>
                             <p className="warrant-paragraph" style={{ margin: '0' }}>
@@ -108,7 +108,7 @@ const ArrestWarrantDocument = ({ data }) => {
                                 द्याल, तर त्यास सोडून द्यावे.
                             </p>
                         </div>
-                    )}
+                    {/* )} */}
                     
                     {/* Issue Date */}
                     <p className="warrant-paragraph" style={{ marginTop: '20px', textAlign: 'left', fontWeight: 'bold' }}>
