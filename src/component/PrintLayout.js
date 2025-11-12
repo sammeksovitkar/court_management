@@ -51,7 +51,10 @@ const PrintLayout = ({ data }) => {
     <div className="a4-page" style={{fontSize:"16px",marginTop:"100px"}}>
       {/* शीर्षलेख */}
       <p className="align-center court-title" style={{ fontWeight: "bold", fontSize: "18px" }}>
-        <span className="data">{data.courtLocation}</span> येथील न्यायदंडाधिकारी प्रथमवर्ग, <span className="data">{data.courtLocation}</span>  यांचे न्यायालयात,
+        <span className="data"></span>
+         {/* न्यायदंडाधिकारी प्रथमवर्ग,  */}
+         {data.court}
+         <span className="data">{data.courtLocation}</span>  यांचे न्यायालयात,
       </p>
       <p className="align-center" style={{ marginTop: '0' }}>
         (न्यायालय क्रमांक १)
