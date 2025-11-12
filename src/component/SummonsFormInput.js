@@ -14,6 +14,8 @@ const initialFormData = {
   witnesses: [
     { name: '', address: '' },
   ],
+    court:"न्यायदंडाधिकारी प्रथमवर्ग,",
+
 };
 
 const SummonsForm = () => {
@@ -120,6 +122,10 @@ const SummonsForm = () => {
       </button>
 
       {/* कोर्टाच्या ठिकाणाची इनपुट फील्ड्स */}
+         <div className="input-group">
+        <label>न्यायालय:</label>
+        <input type="text" name="court" value={formData.court} onChange={handleInputChange} />
+      </div>
       <div className="input-group">
         <label>न्यायालयाचे ठिकाण:</label>
         <input type="text" name="courtLocation" value={formData.courtLocation} onChange={handleInputChange} />
