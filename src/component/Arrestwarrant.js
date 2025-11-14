@@ -593,7 +593,7 @@ const ArrestWarrantApp = () => {
                 </div>
                 
                 {/* 5. Bail/Surety Details (Only shown if B.W. is selected) */}
-                {data.warrantType === 'B.W.' && (
+                {/* {data.warrantType === 'B.W.' && ( */}
                     <>
                         <h3 className="text-lg font-semibold mb-3 text-gray-700 mt-6 border-t pt-4">५. तारण/जामीन तपशील (Bail/Surety Details)</h3>
                         <div className="form-grid">
@@ -638,7 +638,7 @@ const ArrestWarrantApp = () => {
                             </label>
                         </div>
                     </>
-                )}
+                {/* )} */}
                 
                 <h3 className="text-lg font-semibold mb-3 text-gray-700 mt-6 border-t pt-4">वॉरंट जारी करण्याची तारीख</h3>
                 <div className="form-grid">
