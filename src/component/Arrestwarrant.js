@@ -101,7 +101,7 @@ const ArrestWarrantDocument = ({ data }) => {
                         <div className="bail-clause" style={{ marginBottom: '15px', border: '1px dashed #ccc', padding: '10px', background: '#f9f9f9', borderRadius: '4px' }}>
                             <p style={{ fontWeight: 'bold', textDecoration: 'underline', margin: '0 0 5px 0'}}>जामीन सूचना (Bail Instruction):</p>
                             <p className="warrant-paragraph" style={{ margin: '0' }}>
-                              &nbsp;&nbsp;&nbsp; &nbsp;   सदरहू <span className="data-placeholder bold-text"> &nbsp;{data.accusedName} &nbsp;&nbsp;</span> जर तारीख <span className="data-placeholder bold-text">{formatDateToIndian(data.issueDate)}</span> 
+                              &nbsp;&nbsp;&nbsp; &nbsp;   सदरहू <span className="data-placeholder bold-text"> &nbsp;{data.accusedName} &nbsp;&nbsp;</span> जर तारीख <span className="data-placeholder bold-text">{formatDateToIndian(data.appearanceDate)}</span> 
                                  &nbsp; रोजी माझ्यापुढे हजर होण्याविषयी व मी अन्य रितीने हुकूम येईपर्यंत हजर होत राहतील 
                                 याविषयी आपण स्वतः रु. <span className="data-placeholder bold-text">{data.personalBondAmount}</span> रकमेचे तारण लिहून देऊन 
                                 रु. <span className="data-placeholder bold-text">{data.suretyAmount1}</span> रकमेचा एक जामीन (अगर रु. <span className="data-placeholder bold-text">{data.suretyAmount2}</span> रकमेचा प्रत्येक असे दोन)
@@ -112,7 +112,7 @@ const ArrestWarrantDocument = ({ data }) => {
                     
                     {/* Issue Date */}
                    <p className="warrant-paragraph" style={{ marginTop: '20px', textAlign: 'left', fontWeight: 'bold' }}>
-                        आज तारीख <span className="data-placeholder bold-text">{formatDateToIndian(data.appearanceDate)}</span>.
+                        आज तारीख <span className="data-placeholder bold-text">{formatDateToIndian(data.issueDate)}</span>.
                     </p>
                 </div>
 
