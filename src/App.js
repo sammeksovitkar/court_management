@@ -12,6 +12,8 @@ import DashboardOverview from './component/DashboardOverview';
 import Liabrary from './component/Liabrary';
 import NegotiableSummons from './component/NegotiableSummons';
 import ArrestWarrantApp from './component/Arrestwarrant';
+import MuddemalManagement from './MuddemalManagement';
+import StaffInformationTable from './component/StaffInformationTable';
 
 
 const App = () => {
@@ -26,7 +28,8 @@ const App = () => {
         { id: 'applications', name: 'अर्ज व्यवस्थापन (Applications)', icon: <ClipboardList size={20} /> },
         { id: 'schedule', name: 'सुनावणी वेळापत्रक (Schedule)', icon: <Calendar size={20} /> },
         { id: 'stats', name: 'Library Management', icon: <BarChart2 size={20} /> },
-        { id: 'staff', name: 'कर्मचारी व्यवस्थापन (Staff)', icon: <Users size={20} /> },
+        { id: 'staff', name: 'कर्मचारी व्यवस्थापन (Staff)', icon: <BarChart2 size={20} /> },
+        //   { id: 'muddemal', name: 'मुद्देमाल व्यवस्थापन (Muddemal )', icon: <Users size={20} /> },
     ];
 
     // अर्ज उप-मेनू (Applications Sub-menu)
@@ -34,6 +37,8 @@ const App = () => {
         { id: 'summons', name: 'समन्स अर्ज (Summons Application)', component: SummonsFormInput },
         { id: 'warrant', name: 'समन्स अर्ज (NI 138)', component: NegotiableSummons },
         { id: 'warrant2', name: 'वॉरंट अर्ज (Warrant Application)', component: ArrestWarrantApp },
+        // { id: 'muddemal', name: 'मुद्देमाल व्यवस्थापन (Muddemal)', component: MuddemalManagement },
+        //  { id: 'staff', name: 'कर्मचारी व्यवस्थापन (Staff)', component: StaffInformationTable },
     ];
  if (!isLoggedIn) {
         // Pass the function to update the login state on successful login
@@ -59,7 +64,9 @@ const App = () => {
             case 'stats':
                 return <Liabrary/>;
             case 'staff':
-                return <Placeholder title="कर्मचारी व्यवस्थापन (Staff Management)" />;
+                return <StaffInformationTable title="कर्मचारी व्यवस्थापन (Staff Management)" />;
+                case 'muddemal':
+                return <Placeholder title="मुद्देमाल व्यवस्थापन (Muddemal Management)" />;
             default:
                 return <DashboardOverview />;
         }
@@ -267,39 +274,6 @@ const App = () => {
 export default App;
 
 
-
-// import React, { useState, useEffect } from 'react';
-// // Note: useMemo from user's old code removed as it was not used.
-// // Lucide React Icons for a professional look
-// import { 
-//     Menu, BarChart2, Calendar, FileText, Users, ChevronDown, 
-//     ClipboardList, LogOut, UserCircle, Gavel, Lock
-// } from 'lucide-react'; 
-
-// // --- Stubbed External Components (Required for Single File Mandate) ---
-// // Note: Although you mentioned "imported components," I must define these locally 
-// // for the code to run correctly in this single-file environment.
-
-// const SummonsFormInput = () => <div className="p-6 bg-white rounded-xl shadow-lg border border-gray-200">
-//     <h3 className="text-xl font-semibold text-indigo-700">समन्स अर्ज (Summons Application)</h3>
-//     <p className="mt-2 text-gray-600">This is the Summons form input area.</p>
-// </div>;
-
-// const Placeholder = ({ title }) => <div className="p-8 bg-white rounded-2xl shadow-xl text-center">
-//     <FileText size={40} className="mx-auto mb-4 text-gray-400" />
-//     <h3 className="2xl font-bold text-gray-800">{title}</h3>
-//     <p className="mt-2 text-gray-500">Content for this page will be developed here.</p>
-// </div>;
-
-// const DashboardOverview = () => <Placeholder title="मुख्य डॅशबोर्ड (Dashboard Overview)" />;
-
-// const Liabrary = () => <Placeholder title="Library Management" />;
-
-// const NegotiableSummons = () => <Placeholder title="समन्स अर्ज (NI 138) - Negotiable Summons" />;
-
-// const ArrestWarrantApp = () => <Placeholder title="वॉरंट अर्ज (Warrant Application)" />;
-
-
 // --- Login Component ---
 
 const LoginPage = ({ onLogin }) => {
@@ -394,46 +368,27 @@ const LoginPage = ({ onLogin }) => {
         </div>
     );
 };
+// import React, { useState, useMemo } from 'react';
 
+// // Lucide React Icons for a professional look
+// import { 
+//     Menu, BarChart2, Calendar, FileText, Users, Briefcase, ChevronDown, 
+//     ClipboardList, LogOut, Settings, UserCircle, Lock,
+//     Gavel
+// } from 'lucide-react'; 
+// import SummonsFormInput from './component/SummonsFormInput';
+// import Placeholder from './component/Placeholder';
+// import DashboardOverview from './component/DashboardOverview';
+// import Liabrary from './component/Liabrary';
+// import NegotiableSummons from './component/NegotiableSummons';
+// import ArrestWarrantApp from './component/Arrestwarrant';
 
-// --- Main Application Component ---
 
 // const App = () => {
-//     // --- AUTHENTICATION STATE ADDED ---
-//     const [isAuthReady, setIsAuthReady] = useState(false); 
-//     const [isLoggedIn, setIsLoggedIn] = useState(false); 
-
 //     // नेव्हिगेशनसाठी स्थिती व्यवस्थापन (State management for navigation)
 //     const [currentPage, setCurrentPage] = useState('dashboard'); 
 //     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-//     // Initial load check
-//     useEffect(() => {
-//         setIsAuthReady(true);
-//         // By default, isLoggedIn is false, rendering the LoginPage
-//     }, []);
-    
-//     const handleLogout = () => {
-//         setIsLoggedIn(false);
-//         setCurrentPage('dashboard');
-//     };
-
-//     // If application is not ready or user is not logged in, show the loading or login screen
-//     if (!isAuthReady) {
-//         return (
-//             <div className="min-h-screen flex items-center justify-center bg-gray-100">
-//                 <div className="text-indigo-600 animate-spin border-4 border-t-4 border-indigo-600 border-opacity-25 h-12 w-12 rounded-full"></div>
-//                 <p className="ml-4 text-gray-700">ॲप्लिकेशन लोड करत आहे...</p>
-//             </div>
-//         );
-//     }
-    
-//     if (!isLoggedIn) {
-//         // Pass the function to update the login state on successful login
-//         return <LoginPage onLogin={setIsLoggedIn} />;
-//     }
-
-//     // --- APPLICATION RENDERED ONLY IF LOGGED IN ---
+//     const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
 //     // नेव्हिगेशन लिंक्स (Navigation Links) - मराठीमध्ये सुधारित
 //     const navItems = [
@@ -450,7 +405,10 @@ const LoginPage = ({ onLogin }) => {
 //         { id: 'warrant', name: 'समन्स अर्ज (NI 138)', component: NegotiableSummons },
 //         { id: 'warrant2', name: 'वॉरंट अर्ज (Warrant Application)', component: ArrestWarrantApp },
 //     ];
-
+//  if (!isLoggedIn) {
+//         // Pass the function to update the login state on successful login
+//         return <LoginPage onLogin={setIsLoggedIn} />;
+//     }
 //     // वर्तमान पृष्ठानुसार सामग्री प्रस्तुत करण्यासाठी फंक्शन (Function to render content)
 //     const renderContent = () => {
 //         // जर अर्ज उप-मेनूमध्ये असेल, तर तो घटक रेंडर करा
@@ -476,7 +434,10 @@ const LoginPage = ({ onLogin }) => {
 //                 return <DashboardOverview />;
 //         }
 //     };
-
+//     const handleLogout = () => {
+//         setIsLoggedIn(false);
+//         setCurrentPage('dashboard');
+//     };
 //     return (
 //         // मुख्य कंटेनर आणि लेआउट (Main container and layout)
 //         <div className="bg-gray-100 min-h-screen font-sans flex text-gray-800"> 
@@ -557,7 +518,7 @@ const LoginPage = ({ onLogin }) => {
 //             <div 
 //                 className={`fixed lg:relative w-64 min-h-screen bg-indigo-800 text-white z-20 
 //                     transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-//                     lg:translate-x-0 shadow-2xl no-print`}
+//                     lg:translate-x-0 shadow-2xl`}
 //             >
 //                 {/* लोगो/शीर्षक (Logo/Title) */}
 //                 <div className="p-6 text-2xl font-extrabold border-b border-indigo-700 tracking-wider flex items-center bg-indigo-900">
@@ -614,10 +575,7 @@ const LoginPage = ({ onLogin }) => {
 //                         </React.Fragment>
 //                     ))}
 //                     <div className="absolute bottom-4 w-full p-4">
-//                          <button 
-//                              onClick={handleLogout}
-//                              className="w-full flex items-center p-3 rounded-xl transition duration-200 text-left hover:bg-indigo-700 text-indigo-200"
-//                          >
+//                          <button className="w-full flex items-center p-3 rounded-xl transition duration-200 text-left hover:bg-indigo-700 text-indigo-200" onClick={handleLogout}>
 //                              <LogOut size={20} />
 //                              <span className="ml-3 text-lg">बाहेर पडा (Logout)</span>
 //                          </button>
@@ -640,7 +598,7 @@ const LoginPage = ({ onLogin }) => {
 //                     </button>
                     
 //                     {/* वर्तमान शीर्षक (Current Title) */}
-//                     <h2 className="2xl font-bold text-gray-700 sm:ml-4">
+//                     <h2 className="text-2xl font-bold text-gray-700 sm:ml-4">
 //                         {/* वर्तमान पृष्ठाचे नाव दाखवा */}
 //                         {navItems.find(item => item.id === currentPage)?.name || 
 //                          applicationForms.find(form => form.id === currentPage)?.name || 
@@ -650,7 +608,7 @@ const LoginPage = ({ onLogin }) => {
 //                     {/* वापरकर्ता प्रोफाइल (User Profile Mock) */}
 //                     <div className="flex items-center space-x-3 cursor-pointer p-2 rounded-full hover:bg-gray-100 transition">
 //                         <UserCircle size={28} className="text-indigo-500" />
-//                         <span className="text-sm font-medium text-gray-700 hidden sm:inline">उपयोगकर्ता (Admin)</span>
+//                         <span className="text-sm font-medium text-gray-700 hidden sm:inline">उपयोगकर्ता (User ID)</span>
 //                     </div>
 //                 </header>
 
@@ -677,3 +635,100 @@ const LoginPage = ({ onLogin }) => {
 // };
 
 // export default App;
+
+
+
+// // --- Login Component ---
+
+// const LoginPage = ({ onLogin }) => {
+//     const [username, setUsername] = useState('');
+//     const [password, setPassword] = useState('');
+//     const [error, setError] = useState('');
+//     const [isLoading, setIsLoading] = useState(false);
+//     /**
+//      * Mock Login Logic (Use admin/admin)
+//      */
+//     const handleLogin = (e) => {
+//         e.preventDefault();
+//         setError('');
+//         setIsLoading(true);
+
+//         if (username === process.env.REACT_APP_USER_NAME && password === process.env.REACT_APP_PASSWORD) {
+//             setTimeout(() => {
+//                 setIsLoading(false);
+//                 onLogin(true); // Grant access
+//             }, 1000);
+//         } else {
+//             setTimeout(() => {
+//                 setIsLoading(false);
+//                 setError('अवैध वापरकर्तानाव किंवा पासवर्ड (Invalid username or password)');
+//             }, 1000);
+//         }
+//     };
+
+//     return (
+//         <div className="min-h-screen flex items-center justify-center bg-indigo-50 p-4">
+//             <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden">
+                
+//                 <div className="p-8 bg-indigo-700 text-white text-center rounded-t-3xl">
+//                     <Gavel className="mx-auto mb-3 text-teal-400" size={48} />
+//                     <h1 className="text-3xl font-extrabold tracking-wider">मनमाड न्यायालयीन प्रणाली</h1>
+//                     <p className="text-indigo-200 mt-1">न्यायव्यवस्थापन ॲप्लिकेशन</p>
+//                 </div>
+                
+//                 <form onSubmit={handleLogin} className="p-8 space-y-6">
+//                     <h2 className="text-2xl font-semibold text-gray-800 text-center">प्रवेश करा (Login)</h2>
+
+//                     <div>
+//                         <label className="block text-sm font-medium text-gray-700 mb-1">वापरकर्ता ID (User ID)</label>
+//                         <div className="relative">
+//                             <UserCircle size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400" />
+//                             <input 
+//                                 type="text" 
+//                                 placeholder="Admin ID / User ID"
+//                                 value={username} 
+//                                 onChange={(e) => setUsername(e.target.value)} 
+//                                 required
+//                                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
+//                                 disabled={isLoading}
+//                             />
+//                         </div>
+//                     </div>
+
+//                     <div>
+//                         <label className="block text-sm font-medium text-gray-700 mb-1">पासवर्ड (Password)</label>
+//                         <div className="relative">
+//                             <Lock size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400" />
+//                             <input 
+//                                 type="password" 
+//                                 placeholder="●●●●●●●●"
+//                                 value={password} 
+//                                 onChange={(e) => setPassword(e.target.value)} 
+//                                 required
+//                                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
+//                                 disabled={isLoading}
+//                             />
+//                         </div>
+//                     </div>
+                    
+//                     {error && (
+//                         <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl text-sm font-medium text-center">
+//                             {error}
+//                         </div>
+//                     )}
+
+//                     <button 
+//                         type="submit" 
+//                         className={`w-full py-3 rounded-xl text-lg font-semibold transition duration-300 shadow-md 
+//                             ${isLoading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+//                         disabled={isLoading}
+//                     >
+//                         {isLoading ? 'प्रवेश करत आहे...' : 'प्रवेश करा'}
+//                     </button>
+                    
+//                     {/* <p className="text-center text-sm text-gray-500">Demo Credentials: admin / admin</p> */}
+//                 </form>
+//             </div>
+//         </div>
+//     );
+// };
