@@ -12,7 +12,7 @@ import DashboardOverview from './component/DashboardOverview';
 import Liabrary from './component/Liabrary';
 import NegotiableSummons from './component/NegotiableSummons';
 import ArrestWarrantApp from './component/Arrestwarrant';
-import MuddemalManagement from './MuddemalManagement';
+// import MuddemalManagement from './MuddemalManagement';
 import StaffInformationTable from './component/StaffInformationTable';
 
 
