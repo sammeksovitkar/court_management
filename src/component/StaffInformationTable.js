@@ -17,14 +17,18 @@ const staffData = [
   { akr: 13, name: "श्री एस.डी. मेश्राम", designation: "कनिष्ठ लिपिक", joiningDate: "N/A", mobile: "8208902417", dob: "N/A" },
   { akr: 14, name: "श्री व्ही.एस. विसपुते", designation: "कनिष्ठ लिपिक", joiningDate: "N/A", mobile: "9890455132", dob: "N/A" },
   { akr: 15, name: "श्री एम.आर. काथार", designation: "कनिष्ठ लिपिक", joiningDate: "N/A", mobile: "9552976876", dob: "N/A" },
-  { akr: 16, name: "श्री एन.डी. निकम", designation: "हेड बेलीफ", joiningDate: "N/A", mobile: "8624914169", dob: "N/A" },
-  { akr: 17, name: "श्री एस.व्ही. बारे", designation: "बेलीफ", joiningDate: "N/A", mobile: "9623293004", dob: "N/A" },
-  { akr: 18, name: "श्री एन.एस.पाटील", designation: "शिपाई-पहारेकरी", joiningDate: "N/A", mobile: "9130555620", dob: "N/A" },
+
+  { akr: 16, name: "श्री एस.जे. येवले", designation: "कनिष्ठ लिपिक", joiningDate: "N/A", mobile: "9028961411", dob: "N/A" },
+  { akr: 17, name: "श्री एन.डी. निकम ", designation: "हेड बेलीफ", joiningDate: "N/A", mobile: "8624914169", dob: "N/A" },
+
+  { akr: 18, name: "श्री एस.व्ही. बारे ", designation: "बेलीफ", joiningDate: "N/A", mobile: " 9623293004", dob: "N/A" },
   { akr: 19, name: "श्री एस.के. जाधव", designation: "शिपाई-पहारेकरी", joiningDate: "N/A", mobile: "9657358758", dob: "N/A" },
   { akr: 20, name: "श्री ए.टी. गांगुर्डे", designation: "शिपाई-पहारेकरी", joiningDate: "N/A", mobile: "9637493917", dob: "N/A" },
   { akr: 21, name: "श्री डी.बी.हिरे", designation: "शिपाई-पहारेकरी", joiningDate: "N/A", mobile: "8983322788", dob: "N/A" },
   { akr: 22, name: "श्री बी.एन.घोडके", designation: "सफाईगार", joiningDate: "N/A", mobile: "8788160136", dob: "N/A" },
+   { akr: 23, name: "श्री एन.एस.पाटील", designation: "शिपाई-पहारेकरी", joiningDate: "N/A", mobile: "9130555620", dob: "N/A" },
 ];
+
 
 
 const StaffInformationTable = () => {
