@@ -2,7 +2,7 @@ import React from 'react';
 
 // Staff Data (including the new record and N/A dates)
 const staffData = [
-  { akr: 1, name: "श्री व्ही.बी. पाटील", designation: "सहारूयक अधिक्षक", joiningDate: "N/A", mobile: "9922441858", dob: "N/A" },
+  { akr: 1, name: "श्री व्ही.बी. पाटील", designation: "सहाय्यक अधिक्षक", joiningDate: "N/A", mobile: "9922441858", dob: "N/A" },
   { akr: 2, name: "श्री टी.पी सोनार", designation: "सहाय्यक अधिक्षक", joiningDate: "N/A", mobile: "9579055375", dob: "N/A" },
   { akr: 3, name: "श्री व्ही.जे माेरे", designation: "लघुलेखक", joiningDate: "N/A", mobile: "N/A", dob: "N/A" },
   { akr: 4, name: "श्री एस.एस महाले", designation: "वरिष्ठ लिपिक", joiningDate: "N/A", mobile: "9175605886", dob: "N/A" },
