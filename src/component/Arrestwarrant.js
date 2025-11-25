@@ -12,11 +12,11 @@ const formatDateToIndian = (isoDate) => {
     return isoDate; // Return original if format is unexpected
 };
 const actOptions = [
-    { value: "भारतीय दंड संहिता", label: "IPC (भारतीय दंड संहिता)" },
-    { value: "फौजदारी प्रक्रिया संहिता", label: "CrPC (फौजदारी प्रक्रिया संहिता)" },
-    { value: "भारतीय न्याय संहिता", label: "BNS (भारतीय न्याय संहिता)" },
-    { value: "भारतीय नागरिक सुरक्षा संहिता", label: "BNSS (भारतीय नागरिक सुरक्षा संहिता)" },
-    { value: "NI", label: "NI (Negotiable Instruments Act)" },
+    { value: "भारतीय दंड संहिता", label: "IPC " },
+    { value: "फौजदारी प्रक्रिया संहिता", label: "CrPC " },
+    { value: "भारतीय न्याय संहिता", label: "BNS " },
+    { value: "भारतीय नागरिक सुरक्षा संहिता", label: "BNSS " },
+    { value: "Negotiable Instruments Act", label: "NI " },
     { value: "Gambling Act", label: "Gambling Act" },
     { value: "Bombay Prohibition", label: "Bombay Prohibition" },
 ];
