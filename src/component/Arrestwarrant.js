@@ -11,7 +11,15 @@ const formatDateToIndian = (isoDate) => {
     }
     return isoDate; // Return original if format is unexpected
 };
-
+const actOptions = [
+    { value: "भारतीय दंड संहिता", label: "IPC (भारतीय दंड संहिता)" },
+    { value: "फौजदारी प्रक्रिया संहिता", label: "CrPC (फौजदारी प्रक्रिया संहिता)" },
+    { value: "भारतीय न्याय संहिता", label: "BNS (भारतीय न्याय संहिता)" },
+    { value: "भारतीय नागरिक सुरक्षा संहिता", label: "BNSS (भारतीय नागरिक सुरक्षा संहिता)" },
+    { value: "NI", label: "NI (Negotiable Instruments Act)" },
+    { value: "Gambling Act", label: "Gambling Act" },
+    { value: "Bombay Prohibition", label: "Bombay Prohibition" },
+];
 // Component for the printable document content (Arrest Warrant - CrPC 75)
 const ArrestWarrantDocument = ({ data }) => {
     
@@ -536,20 +544,38 @@ const ArrestWarrantApp = () => {
                     {/* *** NEW INPUTS FOR ACT AND SECTION *** */}
                     <label>
                         गुन्हा कायदा (Act):
-                        <select
+                        {/* <select
                             name="act"
                             value={data.act}
                             onChange={handleChange}
                         >
                             <option value="">निवडा (Select)</option>
-                            <option value="IPC">IPC (भारतीय दंड संहिता)</option>
-                            <option value="CrPC">CrPC (फौजदारी प्रक्रिया संहिता)</option>
-                            <option value="BNS">BNS (भारतीय न्याय संहिता)</option>
-                            <option value="BNSS">BNSS (भारतीय नागरिक सुरक्षा संहिता)</option>
+                            <option value="भारतीय दंड संहिता">IPC (भारतीय दंड संहिता)</option>
+                            <option value="फौजदारी प्रक्रिया संहिता">CrPC (फौजदारी प्रक्रिया संहिता)</option>
+                            <option value="भारतीय न्याय संहिता">BNS (भारतीय न्याय संहिता)</option>
+                            <option value="भारतीय नागरिक सुरक्षा संहिता">BNSS (भारतीय नागरिक सुरक्षा संहिता)</option>
                             <option value="NI">NI (Negotiable Instruments Act)</option>
-                             <option value="NI">Gambling Act</option>
-                             <option value="NI">Bombay Prohibition</option>
-                        </select>
+                             <option value="Gambling Act">Gambling Act</option>
+                             <option value="Bombay Prohibition">Bombay Prohibition</option>
+                        </select> */}
+                        <input
+        type="text"
+        name="act"
+        list="act-suggestions" // Link the input to the datalist
+        placeholder="निवडा किंवा जोडा (Select or Add Act)"
+        value={data.act}
+        onChange={handleChange} // This will handle both selection and manual entry
+        className="form-control" // Add your styling class here
+    />
+
+    {/* The <datalist> provides suggestions but allows other input */}
+    <datalist id="act-suggestions">
+        {actOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+                {option.label}
+            </option>
+        ))}
+    </datalist>
                     </label>
                     <label>
                         कलम क्रमांक (Section):
