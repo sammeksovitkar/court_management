@@ -22,18 +22,18 @@ const actOptions = [
 ];
 // Component for the printable document content (Arrest Warrant - CrPC 75)
 const ArrestWarrantDocument = ({ data }) => {
-    
+
     // Helper to extract day, month, year for the issue date section
     const getIssueDateParts = (isoDate) => {
         const dateString = formatDateToIndian(isoDate);
         if (dateString.includes('/')) {
-             const parts = dateString.split('/');
-             // Ensure parts has at least 3 elements before accessing indices
-             return { 
-                 day: parts[0] || '..........', 
-                 month: parts[1] || '..........', 
-                 year: parts[2] || '..........' 
-             };
+            const parts = dateString.split('/');
+            // Ensure parts has at least 3 elements before accessing indices
+            return {
+                day: parts[0] || '..........',
+                month: parts[1] || '..........',
+                year: parts[2] || '..........'
+            };
         }
         return { day: '..........', month: '..........', year: '..........' };
     };
@@ -42,107 +42,122 @@ const ArrestWarrantDocument = ({ data }) => {
     const appearanceYear = data.appearanceDate ? new Date(data.appearanceDate).getFullYear().toString() : '....';
 
     // Descriptive name for the Warrant Type
-    const descriptiveWarrantType = data.warrantType === 'B.W.' 
-        ? 'Bailable Warrant (जामीनपात्र अधिपत्र)' 
+    const descriptiveWarrantType = data.warrantType === 'B.W.'
+        ? 'Bailable Warrant (जामीनपात्र अधिपत्र)'
         : 'Non Bailable Warrant (अजामीनपात्र अधिपत्र)';
-        
+
+
+    const descriptiveWarrant =(type)=>{
+        if (type=='B.W.'){
+            return 'Bailable Warrant (जामीनपात्र अधिपत्र)'
+        }else if(type=="N.B.W."){
+            return 'Non Bailable Warrant (अजामीनपात्र अधिपत्र)'
+        } else if(type=="A.W."){
+            return "Arrest Warrant (पकड वॉरंट)"
+        }
+
+    }
     // *** NEW: Combine Act and Section for the document's offense section ***
-    const offenseDetail = data.act && data.section 
-        ? `${data.act} कलम ${data.section}` 
+    const offenseDetail = data.act && data.section
+        ? `${data.act} कलम ${data.section}`
         : data.act || data.section || '...................';
     // **********************************************************************
 
     return (
         <div className="printable-area" id="print-warrant-content">
             <div className="warrant-document">
-                
+
                 {/* Court and Heading */}
-                <p className="align-center court-title" style={{fontSize:"20px", fontWeight: 'bold',textDecoration:"underline", marginBottom: '5px'}}>
+                <p className="align-center court-title" style={{ fontSize: "20px", fontWeight: 'bold', textDecoration: "underline", marginBottom: '5px' }}>
                     <span className="data-placeholder">{data.courtName}</span>
                 </p>
                 {/* <h3 className="align-center court-slogan" style={{fontSize:"20px", marginTop: '5px', marginBottom: '5px', textDecoration: 'underline'}}>
                     पकडण्याचा वॉरंट
                 </h3> */}
-                
+
                 {/* Warrant Type and Case Type Display */}
-                <div style={{ marginBottom: '15px', width: '100%', lineHeight: '1.2', textAlign:"center" }}>
-                    <p style={{ margin: '0 0 2px 0', textAlign:"center",fontWeight: 'bold', fontSize: '1.1rem', color: data.warrantType === 'N.B.W.' ? '#880000' : '#006400' }} >
-                        <span className="data-placeholder">{descriptiveWarrantType}</span>
+                <div style={{ marginBottom: '15px', width: '100%', lineHeight: '1.2', textAlign: "center" }}>
+                    <p style={{ margin: '0 0 2px 0', textAlign: "center", fontWeight: 'bold', fontSize: '1.1rem', color: data.warrantType === 'N.B.W.' ? '#880000' : '#006400' }} >
+                        <span className="data-placeholder">{descriptiveWarrant(data.warrantType)}</span>
                     </p>
-                     <p style={{ margin: '0', fontSize: '10pt',textAlign:"center"}}>
+                    <p style={{ margin: '0', fontSize: '10pt', textAlign: "center" }}>
                         (क्रि. प्रो. को. क. ७५ पहा)
                     </p>
-                   
-                   
+
+
                 </div>
-                 <p style={{ margin: '0', textAlign:"right",fontSize: '12pt', fontWeight: 'bold'}}>
-                       Case No. &nbsp; {data.caseType}: <span className="data-placeholder">{data.caseNo}</span>
-                    </p>
+                <p style={{ margin: '0', textAlign: "right", fontSize: '12pt', fontWeight: 'bold' }}>
+                    Case No. &nbsp; {data.caseType}: <span className="data-placeholder">{data.caseNo}</span>
+                </p>
 
                 {/* To: Police Inspector */}
                 <div style={{ marginTop: '10px', marginBottom: '10px', padding: '0 0mm' }}>
-                    <p style={{marginBottom: '5px', fontWeight: 'bold'}}>प्रति,</p>
-                    <p style={{marginBottom: '5px'}}>पोलीस निरीक्षक,</p>
-                    <p style={{marginBottom: '5px'}}>
+                    <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>प्रति,</p>
+                    <p style={{ marginBottom: '5px' }}>पोलीस निरीक्षक,</p>
+                    <p style={{ marginBottom: '5px' }}>
                         <span className="data-placeholder">{data.policeStationName}</span> पोलीस स्टेशन,
                     </p>
-                    <p style={{marginBottom: '15px'}}>
+                    <p style={{ marginBottom: '15px' }}>
                         ता. <span className="data-placeholder">{data.policeStationTaluka}</span> जि. <span className="data-placeholder">{data.policeStationDistrict}</span> यांस
                     </p>
                 </div>
 
                 {/* Main Body of Warrant */}
                 <div style={{ marginTop: '20px', textAlign: 'justify' }}>
-                    
+
                     <p className="warrant-paragraph" style={{ marginBottom: '15px' }}>
-                       &nbsp;&nbsp;&nbsp; &nbsp; ज्यापेक्षा आरोपी नामे <span className="data-placeholder bold-text">{data.accusedName}</span> राह. 
-                        <span className="data-placeholder bold-text"> &nbsp;{data.accusedAddress} &nbsp;</span> यावर 
+                        &nbsp;&nbsp;&nbsp; &nbsp; ज्यापेक्षा {data.warrantType=="A.W." ? <span>सामनेवाला</span> : <span>आरोपी</span>}  नामे <span className="data-placeholder bold-text">{data.accusedName}</span> राह.
+                        <span className="data-placeholder bold-text"> &nbsp;{data.accusedAddress} &nbsp;</span> यावर
                         {/* *** UPDATED OFFENSE SECTION *** */}
-                        <span className="data-placeholder bold-text"> &nbsp;{offenseDetail}</span>  &nbsp;या अपराधाचा आरोप आलेला आहे, 
+                        <span className="data-placeholder bold-text"> &nbsp;{offenseDetail}</span>  &nbsp;या अपराधाचा आरोप आलेला आहे,
                         {/* ******************************* */}
-                                 त्यापेक्षा तुम्ही सदरहू आरोपी<span className="data-placeholder bold-text"> &nbsp;&nbsp;{data.accusedName} &nbsp;&nbsp;</span> यास धरून माझ्यापुढे आणावे असा तुम्हास या वॉरंटद्वारे हुकूम केला आहे. 
+                        त्यापेक्षा तुम्ही सदरहू  {data.warrantType=="A.W." ? <span>सामनेवाला</span> : <span>आरोपी</span>} <span className="data-placeholder bold-text"> &nbsp;&nbsp;{data.accusedName} &nbsp;&nbsp;</span> यास धरून माझ्यापुढे आणावे असा तुम्हास या वॉरंटद्वारे हुकूम केला आहे.
                         यात लिहिल्याप्रमाणे तुम्ही चुकू नये.
                     </p>
-                    
+
                     {/* Conditional Bail/Surety Clause (Only for Bailable Warrant) */}
                     {/* {data.warrantType === 'B.W.' && ( */}
-                        <div className="bail-clause" style={{ marginBottom: '15px', border: '1px dashed #ccc', padding: '10px', background: '#f9f9f9', borderRadius: '4px' }}>
-                            <p style={{ fontWeight: 'bold', textDecoration: 'underline', margin: '0 0 5px 0'}}>जामीन सूचना (Bail Instruction):</p>
-                            <p className="warrant-paragraph" style={{ margin: '0' }}>
-                              &nbsp;&nbsp;&nbsp; &nbsp;   सदरहू <span className="data-placeholder bold-text"> &nbsp;{data.accusedName} &nbsp;&nbsp;</span> जर तारीख <span className="data-placeholder bold-text">{formatDateToIndian(data.appearanceDate)}</span> 
-                                 &nbsp; रोजी माझ्यापुढे हजर होण्याविषयी व मी अन्य रितीने हुकूम येईपर्यंत हजर होत राहतील 
-                                याविषयी आपण स्वतः रु. <span className="data-placeholder bold-text">{data.personalBondAmount}</span> रकमेचे तारण लिहून देऊन 
-                                रु. <span className="data-placeholder bold-text">{data.suretyAmount1}</span> रकमेचा एक जामीन (अगर रु. <span className="data-placeholder bold-text">{data.suretyAmount2}</span> रकमेचा प्रत्येक असे दोन)
-                                द्याल, तर त्यास सोडून द्यावे.
-                            </p>
-                        </div>
+                    <div className="bail-clause" style={{ marginBottom: '15px', border: '1px dashed #ccc', padding: '10px', background: '#f9f9f9', borderRadius: '4px' }}>
+                        <p style={{ fontWeight: 'bold', textDecoration: 'underline', margin: '0 0 5px 0' }}>जामीन सूचना (Bail Instruction):</p>
+                        <p className="warrant-paragraph" style={{ margin: '0' }}>
+                            &nbsp;&nbsp;&nbsp; &nbsp;   सदरहू <span className="data-placeholder bold-text"> &nbsp;{data.accusedName} &nbsp;&nbsp;</span> जर तारीख <span className="data-placeholder bold-text">{formatDateToIndian(data.appearanceDate)}</span>
+                            &nbsp; रोजी माझ्यापुढे हजर होण्याविषयी व मी अन्य रितीने हुकूम येईपर्यंत हजर होत राहतील
+                            याविषयी आपण स्वतः रु. <span className="data-placeholder bold-text">{data.personalBondAmount}</span> रकमेचे तारण लिहून देऊन
+                            रु. <span className="data-placeholder bold-text">{data.suretyAmount1}</span> रकमेचा एक जामीन (अगर रु. <span className="data-placeholder bold-text">{data.suretyAmount2}</span> रकमेचा प्रत्येक असे दोन)
+                            द्याल, तर त्यास सोडून द्यावे.
+                        </p>
+                    </div>
                     {/* )} */}
-                    
+
                     {/* Issue Date */}
-                   <p className="warrant-paragraph" style={{ marginTop: '20px', textAlign: 'left', fontWeight: 'bold' }}>
+                    <p className="warrant-paragraph" style={{ marginTop: '20px', textAlign: 'left', fontWeight: 'bold' }}>
                         आज तारीख <span className="data-placeholder bold-text">{formatDateToIndian(data.issueDate)}</span>.
                     </p>
                 </div>
 
                 {/* Footer/Signature Block */}
-                <div className="footer-section" style={{marginTop: '30px', textAlign: 'right'}}>
+                <div className="footer-section" style={{ marginTop: '30px', textAlign: 'right' }}>
                     <div className="signature-block align-right" style={{
-                        width: 'auto', 
+                        width: 'auto',
                         display: 'inline-block',
                         paddingTop: '5px',
                         marginRight: '0px'
-                    }}> 
-                        <p style={{marginBottom: '0', marginTop: '10px', textAlign: 'center', fontWeight: 'bold', }}>
+                    }}>
+                        <p style={{ marginBottom: '0', marginTop: '10px', textAlign: 'center', fontWeight: 'bold', }}>
                             न्यायदंडाधिकारी प्रथम वर्ग,
                         </p>
-                        <p style={{marginBottom: '0', marginTop: '0', textAlign: 'center'}}>
-                            <span className="data-placeholder">{data.courtLocationFooter}</span> 
+                        <p style={{ marginBottom: '0', marginTop: '0', textAlign: 'center' }}>
+                            <span className="data-placeholder">{data.courtLocationFooter}</span>
                         </p>
-                        <p style={{marginBottom: '0', marginTop: '0', textAlign: 'center'}}>
-                            <span className="data-placeholder">{data.talukaDist}</span> 
+                        <p style={{ marginBottom: '0', marginTop: '0', textAlign: 'center' }}>
+                            <span className="data-placeholder">{data.talukaDist}</span>
                         </p>
                     </div>
                 </div>
+                {(data.warrantType === "R.W." ||data.warrantType ===  "A.W.") &&
+                <div className="warrant-document"><p style={{marginTop:"100px"}}> <span style={{fontWeight:"bold"}}>टिप :</span>  सामनेवाल्याने रूपये   <span style={{fontWeight:"bold"}}>  &nbsp; {data.personalBondAmount}&nbsp;</span> भरल्यास त्यास मुक्त करून रक्कम या न्यायालयाकडे जमा करावी</p></div>
+                }
+
             </div>
         </div>
     );
@@ -152,11 +167,11 @@ const ArrestWarrantDocument = ({ data }) => {
 // The main application component
 const ArrestWarrantApp = () => {
     const today = new Date().toISOString().substring(0, 10);
-    
+
     // Initial Data - UPDATED to remove offenseSection and add act/section
     const initialData = {
         courtName: 'न्यायदंडाधिकारी, प्रथम वर्ग, मनमाड शहर ता.नांदगाव जिल्हा नाशिक ',
-        talukaDist:"ता.नांदगाव जिल्हा नाशिक",
+        talukaDist: "ता.नांदगाव जिल्हा नाशिक",
         warrantType: '', // B.W. or N.B.W.
         caseType: '',     // RCC or SCC
         caseNo: '',
@@ -182,7 +197,7 @@ const ArrestWarrantApp = () => {
         const { name, value } = e.target;
         setData((prev) => ({ ...prev, [name]: value }));
     };
-    
+
     const handlePrint = () => {
         // Simple check to prevent printing without mandatory fields
         if (!data.warrantType || !data.caseType || !data.accusedName || !data.section) {
@@ -438,7 +453,7 @@ const ArrestWarrantApp = () => {
                 <h2 className="text-xl font-bold mb-6 text-center text-gray-800">
                     पकडण्याचा वॉरंट माहिती भरा (Arrest Warrant Details - CrPC 75)
                 </h2>
-                
+
                 {/* 1. Warrant Type Selection */}
                 <h3 className="text-lg font-semibold mb-3 text-gray-700">१. वॉरंटचा प्रकार (Warrant Type)</h3>
                 <div className="radio-group">
@@ -462,6 +477,27 @@ const ArrestWarrantApp = () => {
                         />
                         **B.W.** (Bailable Warrant - जामीनपात्र)
                     </label>
+                    {/* <label>
+                        <input
+                            type="radio"
+                            name="warrantType"
+                            value="R.W."
+                            checked={data.warrantType === 'R.W.'}
+                            onChange={handleChange}
+                        />
+                        (Recovery warrant - वसुली)
+                    </label> */}
+                    <label>
+                        <input
+                            type="radio"
+                            name="warrantType"
+                            value="A.W."
+                            checked={data.warrantType === 'A.W.'}
+                            onChange={handleChange}
+                        />
+                        (Arrest Warrant - अटक)
+                    </label>
+
                 </div>
 
                 {/* 2. Case Type Selection */}
@@ -487,11 +523,21 @@ const ArrestWarrantApp = () => {
                         />
                         **SCC** (Summary Criminal Case)
                     </label>
+                     <label>
+                        <input
+                            type="radio"
+                            name="caseType"
+                            value="MA"
+                            checked={data.caseType === 'MA'}
+                            onChange={handleChange}
+                        />
+                        M.A. (Miscellaneous Appllication)
+                    </label>
                 </div>
 
                 <h3 className="text-lg font-semibold mb-3 text-gray-700 mt-6 border-t pt-4">३. न्यायालयीन तपशील</h3>
                 <div className="form-grid">
-                    <label style={{gridColumn: 'span 2'}}>
+                    <label style={{ gridColumn: 'span 2' }}>
                         न्यायालय/वॉरंट जारी करणारे (Court/Issuing Authority):
                         <input
                             type="text"
@@ -510,7 +556,7 @@ const ArrestWarrantApp = () => {
                         />
                     </label>
                     <label>
-                       कोर्टाचे ठिकाण (Court Location):
+                        कोर्टाचे ठिकाण (Court Location):
                         <input
                             type="text"
                             name="courtLocationFooter"
@@ -520,7 +566,7 @@ const ArrestWarrantApp = () => {
                     </label>
                 </div>
 
-                 <h3 className="text-lg font-semibold mb-3 text-gray-700 mt-6 border-t pt-4">४. आरोपी आणि गुन्हा तपशील</h3>
+                <h3 className="text-lg font-semibold mb-3 text-gray-700 mt-6 border-t pt-4">४. आरोपी आणि गुन्हा तपशील</h3>
                 <div className="form-grid">
                     <label>
                         आरोपीचे नांव (Accused Name):
@@ -531,7 +577,7 @@ const ArrestWarrantApp = () => {
                             onChange={handleChange}
                         />
                     </label>
-                    <label style={{gridColumn: 'span 2'}}>
+                    <label style={{ gridColumn: 'span 2' }}>
                         आरोपीचा पत्ता (Accused Address):
                         <input
                             type="text"
@@ -540,7 +586,7 @@ const ArrestWarrantApp = () => {
                             onChange={handleChange}
                         />
                     </label>
-                    
+
                     {/* *** NEW INPUTS FOR ACT AND SECTION *** */}
                     <label>
                         गुन्हा कायदा (Act):
@@ -559,23 +605,23 @@ const ArrestWarrantApp = () => {
                              <option value="Bombay Prohibition">Bombay Prohibition</option>
                         </select> */}
                         <input
-        type="text"
-        name="act"
-        list="act-suggestions" // Link the input to the datalist
-        placeholder="निवडा किंवा जोडा (Select or Add Act)"
-        value={data.act}
-        onChange={handleChange} // This will handle both selection and manual entry
-        className="form-control" // Add your styling class here
-    />
+                            type="text"
+                            name="act"
+                            list="act-suggestions" // Link the input to the datalist
+                            placeholder="निवडा किंवा जोडा (Select or Add Act)"
+                            value={data.act}
+                            onChange={handleChange} // This will handle both selection and manual entry
+                            className="form-control" // Add your styling class here
+                        />
 
-    {/* The <datalist> provides suggestions but allows other input */}
-    <datalist id="act-suggestions">
-        {actOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-                {option.label}
-            </option>
-        ))}
-    </datalist>
+                        {/* The <datalist> provides suggestions but allows other input */}
+                        <datalist id="act-suggestions">
+                            {actOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </datalist>
                     </label>
                     <label>
                         कलम क्रमांक (Section):
@@ -588,7 +634,7 @@ const ArrestWarrantApp = () => {
                         />
                     </label>
                     {/* *************************************** */}
-                    
+
                     <label>
                         पोलीस स्टेशनचे नांव (Police Station):
                         <input
@@ -617,55 +663,55 @@ const ArrestWarrantApp = () => {
                         />
                     </label>
                 </div>
-                
+
                 {/* 5. Bail/Surety Details (Only shown if B.W. is selected) */}
                 {/* {data.warrantType === 'B.W.' && ( */}
-                    <>
-                        <h3 className="text-lg font-semibold mb-3 text-gray-700 mt-6 border-t pt-4">५. तारण/जामीन तपशील (Bail/Surety Details)</h3>
-                        <div className="form-grid">
-                            <label>
-                                न्यायालयात हजर होण्याची तारीख (Appearance Date):
-                                <input
-                                    type="date"
-                                    name="appearanceDate"
-                                    value={data.appearanceDate}
-                                    onChange={handleChange}
-                                />
-                            </label>
-                            <label>
-                                स्वतःचे तारण रक्कम (Personal Bond Amount - रु.):
-                                <input
-                                    type="text"
-                                    name="personalBondAmount"
-                                    value={data.personalBondAmount}
-                                    onChange={handleChange}
-                                    placeholder="उदा. 20,000/-"
-                                />
-                            </label>
-                            <label>
-                                जामीनदार रक्कम (Surety Amount - १ जामीन):
-                                <input
-                                    type="text"
-                                    name="suretyAmount1"
-                                    value={data.suretyAmount1}
-                                    onChange={handleChange}
-                                    placeholder="उदा. 10,000/-"
-                                />
-                            </label>
-                            <label>
-                                प्रत्येक जामीनदार रक्कम (Surety Amount - २ जामीन):
-                                <input
-                                    type="text"
-                                    name="suretyAmount2"
-                                    value={data.suretyAmount2}
-                                    onChange={handleChange}
-                                    placeholder="उदा. 10,000/-"
-                                />
-                            </label>
-                        </div>
-                    </>
+                <>
+                    <h3 className="text-lg font-semibold mb-3 text-gray-700 mt-6 border-t pt-4">५. तारण/जामीन तपशील (Bail/Surety Details)</h3>
+                    <div className="form-grid">
+                        <label>
+                            न्यायालयात हजर होण्याची तारीख (Appearance Date):
+                            <input
+                                type="date"
+                                name="appearanceDate"
+                                value={data.appearanceDate}
+                                onChange={handleChange}
+                            />
+                        </label>
+                        <label>
+                            स्वतःचे तारण रक्कम (Personal Bond Amount - रु.):
+                            <input
+                                type="text"
+                                name="personalBondAmount"
+                                value={data.personalBondAmount}
+                                onChange={handleChange}
+                                placeholder="उदा. 20,000/-"
+                            />
+                        </label>
+                        <label>
+                            जामीनदार रक्कम (Surety Amount - १ जामीन):
+                            <input
+                                type="text"
+                                name="suretyAmount1"
+                                value={data.suretyAmount1}
+                                onChange={handleChange}
+                                placeholder="उदा. 10,000/-"
+                            />
+                        </label>
+                        <label>
+                            प्रत्येक जामीनदार रक्कम (Surety Amount - २ जामीन):
+                            <input
+                                type="text"
+                                name="suretyAmount2"
+                                value={data.suretyAmount2}
+                                onChange={handleChange}
+                                placeholder="उदा. 10,000/-"
+                            />
+                        </label>
+                    </div>
+                </>
                 {/* )} */}
-                
+
                 <h3 className="text-lg font-semibold mb-3 text-gray-700 mt-6 border-t pt-4">वॉरंट जारी करण्याची तारीख</h3>
                 <div className="form-grid">
                     <label>
