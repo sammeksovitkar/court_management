@@ -8,13 +8,13 @@ const initialFormData = {
   // New selections
   formType: 'साक्षीदारास समन्स', // Default: साक्षीदारास समन्स
   caseType: 'R.C.C.',        // Default: R.C.C.
-  
+
   // Data fields
   caseNo: '',
   accusedName: '',
   lawSection: '',
-  summonDate: '', 
-  currentDate: new Date().toLocaleDateString('en-GB'), 
+  summonDate: '',
+  currentDate: new Date().toLocaleDateString('en-GB'),
   courtLocation: 'मनमाड शहर न्यायालय, ता.नांदगाव जिल्हा नाशिक ',
   policeStation: 'मनमाड शहर',
   court: "न्यायदंडाधिकारी प्रथमवर्ग,",
@@ -22,21 +22,29 @@ const initialFormData = {
     { name: '', address: '' },
   ],
 };
-
+const actOptions = [
+    { value: "भारतीय दंड संहिता", label: "IPC " },
+    { value: "फौजदारी प्रक्रिया संहिता", label: "CrPC " },
+    { value: "भारतीय न्याय संहिता", label: "BNS " },
+    { value: "भारतीय नागरिक सुरक्षा संहिता", label: "BNSS " },
+    { value: "Negotiable Instruments Act", label: "NI " },
+    { value: "Gambling Act", label: "Gambling Act" },
+    { value: "Bombay Prohibition", label: "Bombay Prohibition" },
+];
 // =================================================================
 // PrintLayout Component (Internal - Pure JSX/Marathi Layout)
 // =================================================================
 
 const PrintLayout = React.memo(({ data }) => {
-  const { 
-    formType, caseType, caseNo, accusedName, lawSection, 
-    summonDate, currentDate, courtLocation, policeStation, court, 
-    witnesses 
+  const {
+    formType, caseType, caseNo, accusedName, lawSection,
+    summonDate, currentDate, courtLocation, policeStation, court,
+    witnesses
   } = data;
 
   const caseLabel = useMemo(() => {
     if (caseType === 'R.C.C.' || caseType === 'S.C.C.') {
-        return `${caseType}. No.`;
+      return `${caseType}. No.`;
     }
     return `${caseType} No.`;
   }, [caseType]);
@@ -116,29 +124,29 @@ const PrintLayout = React.memo(({ data }) => {
           <p className="body-paragraph">
             {spaceIndent}  या कामी रास्त सबबीशिवाय हयगय केली तर, तुम्हाला हजर राहण्याची सक्ती करण्यासाठी वॉरंट काढले जाईल.
           </p>
-       <div style={{ lineHeight: 1.5,  }}>
+          <div style={{ lineHeight: 1.5, }}>
             {renderCaseNumber('आज दिनांक', currentDateFormatted)}
-        </div>
+          </div>
         </div>
       );
-    } 
-    
+    }
+
     // आरोपीस समन्स / सामनेवाला यांस नोंटीस
     return (
       <div style={{ marginTop: '15px', lineHeight: "1.8" }}>
         <p className="body-paragraph">
           {/* {spaceIndent}  ज्या अर्थी **(आरोपीचे नांव)** <span className="data-placeholder">{accusedPlaceholder}</span> याने कायदा <span className="data-placeholder">{lawPlaceholder}</span> प्रमाणे अपराध केला आहे अशी माझ्याकडे फिर्याद देण्यात आली आहे. */}
-        {spaceIndent} ज्या अर्थी उक्त आरोपीस/सा.वाला/यांस वरील खटल्यात कायदा <span className="data-placeholder">{lawPlaceholder}</span>  	      मध्ये उत्तर देण्याकरीता तुमची उपस्थिती आवश्यक आहे.  त्याअर्थी तुम्ही न्यायदंडाधिकारी प्रथम वर्ग, मनमाड शहर  यांचे न्यायालयात दिनांक <span className="data-placeholder">{summonDateFormatted}</span>   या दिवशी सकाळी 10:30 वाजता जातीने स्वतः अगर वकीलां मार्फत उपस्थित राहावे.
+          {spaceIndent} ज्या अर्थी उक्त आरोपीस/सा.वाला/यांस वरील खटल्यात कायदा <span className="data-placeholder">{lawPlaceholder}</span>  	      मध्ये उत्तर देण्याकरीता तुमची उपस्थिती आवश्यक आहे.  त्याअर्थी तुम्ही न्यायदंडाधिकारी प्रथम वर्ग, मनमाड शहर  यांचे न्यायालयात दिनांक <span className="data-placeholder">{summonDateFormatted}</span>   या दिवशी सकाळी 10:30 वाजता जातीने स्वतः अगर वकीलां मार्फत उपस्थित राहावे.
 
-        
+
         </p>
         <p className="body-paragraph">
-         {spaceIndent} यात कसुर झाल्यास तुमचे विरूध्द पुढील कार्यवाही करणेत येईल याची नोंद घ्यावी.
+          {spaceIndent} यात कसुर झाल्यास तुमचे विरूध्द पुढील कार्यवाही करणेत येईल याची नोंद घ्यावी.
           {/* {spaceIndent}  म्हणून तुम्हाला याव्दारे या न्यायालयापुढे येत्या दिनांक <span className="data-placeholder">{summonDateFormatted}</span> रोजी सकाळी ठिक ११:०० वाजता उक्त फिर्यादीसंबंधाने हजर राहण्याचे {noticeOrSummons} पाठवण्यात येत आहे. */}
         </p>
 
-         <div style={{ lineHeight: 1.5,  }}>
-            {renderCaseNumber('आज दिनांक', currentDateFormatted)}
+        <div style={{ lineHeight: 1.5, }}>
+          {renderCaseNumber('आज दिनांक', currentDateFormatted)}
         </div>
         {/* <p className="body-paragraph">
           {spaceIndent}  या कामी रास्त सबबीशिवाय हयगय केली तर, तुम्हाला हजर राहण्याची सक्ती करण्यासाठी वॉरंट काढले जाईल.
@@ -151,12 +159,12 @@ const PrintLayout = React.memo(({ data }) => {
 
   return (
     // ⚠️ Note: A4-page class is applied in print styles, not here.
-    <div className="a4-page-content" style={{fontSize:"13pt",marginTop:"50px"}}> 
-      
+    <div className="a4-page-content" style={{ fontSize: "13pt", marginTop: "50px" }}>
+
       {/* 1. शीर्षक / न्यायालय */}
       <p className="align-center court-title" style={{ fontWeight: "bold", fontSize: "16pt", marginBottom: '5px' }}>
-         {court}
-         <span className="data-placeholder">{courtLocationPlaceholder}</span> 
+        {court}
+        <span className="data-placeholder">{courtLocationPlaceholder}</span>
       </p>
       <p className="align-center" style={{ marginTop: '0', marginBottom: '15px', fontSize: '11pt' }}>
         (न्यायालय क्रमांक १)
@@ -165,52 +173,52 @@ const PrintLayout = React.memo(({ data }) => {
 
       {/* 2. केस क्रमांक आणि तारीख */}
       {/* <div className="case-numbers" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '11pt' }}> */}
-        <div style={{ lineHeight: 1.5 ,textAlign: 'right'}}>
-            {renderCaseNumber(caseLabel, caseNoPlaceholder)}
-            {/* {caseType === 'R.C.C.' && renderCaseNumber('S.C.C. No.', '.....................')} */}
+      <div style={{ lineHeight: 1.5, textAlign: 'right' }}>
+        {renderCaseNumber(caseLabel, caseNoPlaceholder)}
+        {/* {caseType === 'R.C.C.' && renderCaseNumber('S.C.C. No.', '.....................')} */}
         {/* </div> */}
-       
+
       </div>
 
       {/* 3. प्राप्तकर्ता पत्ता (पोलीस स्टेशन) */}
       <div style={{ marginTop: '10px', marginBottom: '10px', lineHeight: "1.6" }}>
         <p style={{ marginBottom: '0' }}>प्रति,</p>
         <p style={{ marginBottom: '0' }}>पोलीस निरीक्षक,</p>
-        <p style={{  marginTop: '0' }}><span className="data-placeholder">{policeStationPlaceholder}</span> पोलीस स्टेशन, यांना बजावणीसाठी अग्रेषीत</p>
+        <p style={{ marginTop: '0' }}><span className="data-placeholder">{policeStationPlaceholder}</span> पोलीस स्टेशन, यांना बजावणीसाठी अग्रेषीत</p>
       </div>
 
       {/* 4. साक्षीदारांची यादी (फक्त साक्षीदारास समन्ससाठी) */}
       {formType === 'साक्षीदारास समन्स' ? (
-        <div style={{ marginTop: '10px' , }}>
+        <div style={{ marginTop: '10px', }}>
           {/* <h3 className="align-center print-subtitle" style={{ marginTop: '20px', marginBottom: '5px', fontSize: '12pt', fontWeight: 'bold' }}>साक्षीदारांचे नांव</h3> */}
           <table className="witness-table" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '5px', fontSize: '10pt' }}>
-            <thead style={{fontSize:"15px"}}>
+            <thead style={{ fontSize: "15px" }}>
               <tr>
                 <th style={{ width: '5%', border: '1px solid black', padding: '4px 6px' }}>अ.क्र</th>
                 <th style={{ width: '40%', border: '1px solid black', padding: '4px 6px' }}>साक्षीदाराचे नांव</th>
                 <th style={{ width: '55%', border: '1px solid black', padding: '4px 6px' }}>राहणार</th>
               </tr>
             </thead >
-            <tbody style={{fontSize:"15px"}}>{renderWitnessRows()}</tbody>
+            <tbody style={{ fontSize: "15px" }}>{renderWitnessRows()}</tbody>
           </table>
         </div>
-      ):<div style={{ marginTop: '10px' }}>
-          {/* <h3 className="align-center print-subtitle" style={{ marginTop: '20px', marginBottom: '5px', fontSize: '12pt', fontWeight: 'bold' }}> आराेपी/सामनेवाला नांव</h3> */}
-          <table className="witness-table" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '5px', fontSize: '10pt' }}>
-            <thead style={{fontSize:"15px"}}>
-              <tr>
-                <th style={{ width: '5%', border: '1px solid black', padding: '4px 6px' }}>अ.क्र</th>
-                <th style={{ width: '40%', border: '1px solid black', padding: '4px 6px' }}>आराेपी/सामनेवाला नांव</th>
-                <th style={{ width: '55%', border: '1px solid black', padding: '4px 6px' }}>राहणार</th>
-              </tr>
-            </thead>
-            <tbody style={{fontSize:"15px"}}>{renderWitnessRows()}</tbody>
-          </table>
-        </div>}
+      ) : <div style={{ marginTop: '10px' }}>
+        {/* <h3 className="align-center print-subtitle" style={{ marginTop: '20px', marginBottom: '5px', fontSize: '12pt', fontWeight: 'bold' }}> आराेपी/सामनेवाला नांव</h3> */}
+        <table className="witness-table" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '5px', fontSize: '10pt' }}>
+          <thead style={{ fontSize: "15px" }}>
+            <tr>
+              <th style={{ width: '5%', border: '1px solid black', padding: '4px 6px' }}>अ.क्र</th>
+              <th style={{ width: '40%', border: '1px solid black', padding: '4px 6px' }}>आराेपी/सामनेवाला नांव</th>
+              <th style={{ width: '55%', border: '1px solid black', padding: '4px 6px' }}>राहणार</th>
+            </tr>
+          </thead>
+          <tbody style={{ fontSize: "15px" }}>{renderWitnessRows()}</tbody>
+        </table>
+      </div>}
 
       {/* 5. समन्सचा मुख्य भाग */}
       {mainContent}
-      
+
       {/* 6. तळटीप/स्वाक्षरी ब्लॉक */}
       <div className="footer-section" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '50px' }}>
         <div className="signature-block align-right" style={{ lineHeight: 1.6, width: '40%', textAlign: 'center' }}>
@@ -247,26 +255,26 @@ const SummonsFormApp = () => {
     });
     setFormData((prev) => ({ ...prev, witnesses: newWitnesses }));
   };
-  
+
   const handleAddWitness = () => {
     setFormData(prev => ({
       ...prev,
       witnesses: [...prev.witnesses, { name: '', address: '' }]
     }));
   };
-  
+
   const handleFormTypeChange = (type) => {
     setFormData(prev => ({
-        ...prev,
-        formType: type
+      ...prev,
+      formType: type
     }));
   };
 
   const handleCaseTypeChange = (type) => {
     setFormData(prev => ({
-        ...prev,
-        caseType: type,
-        caseNo: '' 
+      ...prev,
+      caseType: type,
+      caseNo: ''
     }));
   };
 
@@ -284,25 +292,25 @@ const SummonsFormApp = () => {
   // =================================================================
   const handlePrint = () => {
 
-const getPartyLabel = (formType) => {
-  switch (formType) {
-    case 'साक्षीदारास समन्स':
-      // साक्षीदारास समन्स मध्ये, आपण आरोपीचे नाव 'बनाम' म्हणून वापरतो.
-      return 'आरोपीचे नांव'; 
-    case 'सामनेवाला यांस नोटीस':
-      return 'सामनेवाल्याचे नांव';
-    case 'आरोपीस समन्स':
-      return 'आरोपीचे नांव';
-    default:
-      return 'व्यक्तीचे नांव';
-  }
-};
+    const getPartyLabel = (formType) => {
+      switch (formType) {
+        case 'साक्षीदारास समन्स':
+          // साक्षीदारास समन्स मध्ये, आपण आरोपीचे नाव 'बनाम' म्हणून वापरतो.
+          return 'आरोपीचे नांव';
+        case 'सामनेवाला यांस नोटीस':
+          return 'सामनेवाल्याचे नांव';
+        case 'आरोपीस समन्स':
+          return 'आरोपीचे नांव';
+        default:
+          return 'व्यक्तीचे नांव';
+      }
+    };
 
     const printContent = document.getElementById('print-area').innerHTML;
-    
+
     const printWindow = window.open('', '_blank');
     printWindow.document.write('<html><head><title>कोर्ट दस्तऐवज</title>');
-    
+
     // 🎨 A4 आणि प्रिंटसाठी आवश्यक स्टाईल्स (Layout FIXES Applied)
     printWindow.document.write('<style>');
     printWindow.document.write(`
@@ -409,15 +417,15 @@ const getPartyLabel = (formType) => {
     printWindow.document.write('</head><body>');
     printWindow.document.write(printContent);
     printWindow.document.write('</body></html>');
-    
+
     printWindow.document.close();
     printWindow.print();
   };
-  
+
   // =================================================================
   // UI Rendering
   // =================================================================
-  
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Tailwind and Custom CSS for Form */}
@@ -522,10 +530,10 @@ const getPartyLabel = (formType) => {
             outline: none;
         }
       `}</style>
-      
+
       <div className="form-container">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">कोर्ट दस्तऐवज निर्मिती (Court Document Generator)</h2>
-        
+
         <button onClick={handlePrint} className="print-button">
           प्रिंट करा 🖨️
         </button>
@@ -537,10 +545,10 @@ const getPartyLabel = (formType) => {
         <div className="radio-group">
           {['साक्षीदारास समन्स', 'आरोपीस समन्स', 'सामनेवाला यांस नोटीस'].map(type => (
             <label key={type}>
-              <input 
-                type="radio" 
-                name="formType" 
-                value={type} 
+              <input
+                type="radio"
+                name="formType"
+                value={type}
                 checked={formData.formType === type}
                 onChange={() => handleFormTypeChange(type)}
               />
@@ -556,10 +564,10 @@ const getPartyLabel = (formType) => {
         <div className="radio-group">
           {['R.C.C.', 'Cri M.A.', 'D.V.', 'S.C.C.'].map(type => (
             <label key={type}>
-              <input 
-                type="radio" 
-                name="caseType" 
-                value={type} 
+              <input
+                type="radio"
+                name="caseType"
+                value={type}
                 checked={formData.caseType === type}
                 onChange={() => handleCaseTypeChange(type)}
               />
@@ -573,14 +581,14 @@ const getPartyLabel = (formType) => {
 
         {/* न्यायालय आणि ठिकाणे */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="input-group">
-                <label>न्यायालय (उदा: न्यायदंडाधिकारी प्रथमवर्ग,):</label>
-                <input type="text" name="court" value={formData.court} onChange={handleInputChange} placeholder="न्यायदंडाधिकारी प्रथमवर्ग," />
-            </div>
-            <div className="input-group">
-                <label>न्यायालयाचे ठिकाण:</label>
-                <input type="text" name="courtLocation" value={formData.courtLocation} onChange={handleInputChange} placeholder="मनमाड शहर" />
-            </div>
+          <div className="input-group">
+            <label>न्यायालय (उदा: न्यायदंडाधिकारी प्रथमवर्ग,):</label>
+            <input type="text" name="court" value={formData.court} onChange={handleInputChange} placeholder="न्यायदंडाधिकारी प्रथमवर्ग," />
+          </div>
+          <div className="input-group">
+            <label>न्यायालयाचे ठिकाण:</label>
+            <input type="text" name="courtLocation" value={formData.courtLocation} onChange={handleInputChange} placeholder="मनमाड शहर" />
+          </div>
         </div>
         <div className="input-group">
           <label>पोलीस स्टेशनचे ठिकाण:</label>
@@ -590,84 +598,103 @@ const getPartyLabel = (formType) => {
 
         {/* केस क्रमांक */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="input-group">
-              <label>{caseLabelText} (क्रमांक):</label>
-              <input type="text" name="caseNo" value={formData.caseNo} onChange={handleInputChange} placeholder="केस क्रमांक / Case Number" />
-            </div>
-             <div className="input-group">
-                <label>समन्सची तारीख (दिनांक):</label>
-                <input type="date" name="summonDate" value={formData.summonDate} onChange={handleInputChange} />
-            </div>
+          <div className="input-group">
+            <label>{caseLabelText} (क्रमांक):</label>
+            <input type="text" name="caseNo" value={formData.caseNo} onChange={handleInputChange} placeholder="केस क्रमांक / Case Number" />
+          </div>
+          <div className="input-group">
+            <label>समन्सची तारीख (दिनांक):</label>
+            <input type="date" name="summonDate" value={formData.summonDate} onChange={handleInputChange} />
+          </div>
         </div>
 
 
         {/* आरोपी आणि कलम */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {formData.formType === 'साक्षीदारास समन्स' && 
+          {formData.formType === 'साक्षीदारास समन्स' &&
             <div className="input-group">
-                <label>{formData.formType === 'साक्षीदारास समन्स' ? 'आरोपीचे नांव' : 'आरोपीचे/सामनेवाल्याचे नांव'}:</label>
-                <input type="text" name="accusedName" value={formData.accusedName} onChange={handleInputChange} placeholder="पूर्ण नांव" />
+              <label>{formData.formType === 'साक्षीदारास समन्स' ? 'आरोपीचे नांव' : 'आरोपीचे/सामनेवाल्याचे नांव'}:</label>
+              <input type="text" name="accusedName" value={formData.accusedName} onChange={handleInputChange} placeholder="पूर्ण नांव" />
             </div>
-            }
-            <div className="input-group">
-                <label>कायदा/कलम:</label>
-                <input type="text" name="lawSection" value={formData.lawSection} onChange={handleInputChange} placeholder="उदा: IPC कलम 323, 504" />
-            </div>
+          }
+          <div className="input-group">
+            <label>कायदा/कलम:</label>
+            {/* <input type="text" name="lawSection" value={formData.lawSection} onChange={handleInputChange} placeholder="उदा: IPC कलम 323, 504" /> */}
+
+            <input
+              type="text"
+              name="lawSection"
+              list="act-suggestions" // Link the input to the datalist
+              placeholder="निवडा किंवा जोडा (Select or Add Act)"
+              value={formData.lawSection}
+              onChange={handleInputChange} // This will handle both selection and manual entry
+              className="form-control" // Add your styling class here
+            />
+
+            {/* The <datalist> provides suggestions but allows other input */}
+            <datalist id="act-suggestions">
+              {actOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </datalist>
+          </div>
         </div>
 
         {/* साक्षदार यादी (साक्षीदारास समन्ससाठीच) */}
         {/* {showWitnesses && ( */}
-        
-          <>
-            <h3 className="text-xl font-semibold mt-6 mb-4 text-purple-700">४. {formData.formType} नांव</h3>
-            <table className="witness-input-table">
-              <thead>
-                <tr>
-                  <th style={{width: '10%'}}>अ.क्र</th>
-                  <th style={{width: '45%'}}>{formData.formType } नांव</th>
-                  <th style={{width: '45%'}}>राहणार (पत्ता)</th>
+
+        <>
+          <h3 className="text-xl font-semibold mt-6 mb-4 text-purple-700">४. {formData.formType} नांव</h3>
+          <table className="witness-input-table">
+            <thead>
+              <tr>
+                <th style={{ width: '10%' }}>अ.क्र</th>
+                <th style={{ width: '45%' }}>{formData.formType} नांव</th>
+                <th style={{ width: '45%' }}>राहणार (पत्ता)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {formData.witnesses.map((witness, index) => (
+                <tr key={index}>
+                  <td className="text-center">{index + 1}</td>
+                  <td>
+                    <input
+                      type="text"
+                      value={witness.name}
+                      onChange={(e) => handleWitnessChange(index, 'name', e.target.value)}
+                      placeholder="साक्षीदाराचे नांव"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={witness.address}
+                      onChange={(e) => handleWitnessChange(index, 'address', e.target.value)}
+                      placeholder="पत्ता"
+                    />
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {formData.witnesses.map((witness, index) => (
-                  <tr key={index}>
-                    <td className="text-center">{index + 1}</td>
-                    <td>
-                      <input
-                        type="text"
-                        value={witness.name}
-                        onChange={(e) => handleWitnessChange(index, 'name', e.target.value)}
-                        placeholder="साक्षीदाराचे नांव"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={witness.address}
-                        onChange={(e) => handleWitnessChange(index, 'address', e.target.value)}
-                        placeholder="पत्ता"
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            
-            <button onClick={handleAddWitness} className="add-button">
-              + साक्षदार जोडा
-            </button>
-          </>
+              ))}
+            </tbody>
+          </table>
+
+          <button onClick={handleAddWitness} className="add-button">
+            + साक्षदार जोडा
+          </button>
+        </>
         {/* )} */}
-        
+
         {/* आजची तारीख */}
-        <div className="input-group" style={{marginTop: '30px'}}>
+        <div className="input-group" style={{ marginTop: '30px' }}>
           <label>आजची तारीख (दिनांक - DD/MM/YYYY):</label>
-          <input 
-              type="text" 
-              name="currentDate" 
-              value={formData.currentDate} 
-              onChange={handleInputChange} 
-              placeholder="DD/MM/YYYY"
+          <input
+            type="text"
+            name="currentDate"
+            value={formData.currentDate}
+            onChange={handleInputChange}
+            placeholder="DD/MM/YYYY"
           />
         </div>
 
