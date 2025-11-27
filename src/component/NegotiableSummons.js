@@ -43,7 +43,7 @@ const AccusedSummonsDocument = ({ data }) => {
 
                 {/* तक्रारदार आणि आरोपी माहिती */}
                 <div style={{ marginTop: '10px', marginBottom: '10px', padding: '0 3mm' }}>
-                    <p style={{marginBottom: '5px', fontWeight: 'bold'}}>तक्रारदाराचे नाव व पत्ता: <span className="data-placeholder">{data.complainantName}</span></p>
+                    <p style={{marginBottom: '5px', fontWeight: 'bold',textAlign:"right"}}>तक्रारदाराचे नाव व पत्ता: <span className="data-placeholder">{data.complainantName}</span></p>
                     <p style={{marginBottom: '5px', fontWeight: 'bold'}}>प्रति,</p>
                     {/* पोलीस निरीक्षक */}
                     <p style={{marginBottom: '5px'}}>पोलीस निरीक्षक,</p>
