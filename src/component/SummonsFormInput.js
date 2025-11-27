@@ -116,6 +116,9 @@ const PrintLayout = React.memo(({ data }) => {
           <p className="body-paragraph">
             {spaceIndent}  या कामी रास्त सबबीशिवाय हयगय केली तर, तुम्हाला हजर राहण्याची सक्ती करण्यासाठी वॉरंट काढले जाईल.
           </p>
+       <div style={{ lineHeight: 1.5,  }}>
+            {renderCaseNumber('आज दिनांक', currentDateFormatted)}
+        </div>
         </div>
       );
     } 
