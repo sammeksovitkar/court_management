@@ -1,3 +1,4 @@
+// import React, { useState, useMemo, useCallback } from 'react';
 import React, { useState, useMemo, useCallback } from 'react';
 
 // =================================================================
@@ -16,7 +17,8 @@ const initialFormData = {
   summonDate: '',
   currentDate: new Date().toLocaleDateString('en-GB'),
   courtLocation: 'मनमाड शहर न्यायालय, ता.नांदगाव जिल्हा नाशिक ',
-  policeStation: 'मनमाड शहर',
+  courtLocationEnglish:"Manmad City Court, Tq. Nandgaon Dist Nashik",
+  policeStation: 'पोलीस निरीक्षक,पोलीस स्टेशन मनमाड शहर',
   court: "न्यायदंडाधिकारी प्रथमवर्ग,",
   witnesses: [
     { name: '', address: '' },
@@ -31,29 +33,85 @@ const actOptions = [
     { value: "Gambling Act", label: "Gambling Act" },
     { value: "Bombay Prohibition", label: "Bombay Prohibition" },
 ];
+
 // =================================================================
-// PrintLayout Component (Internal - Pure JSX/Marathi Layout)
+// Translation Constants
 // =================================================================
 
-const PrintLayout = React.memo(({ data }) => {
+const MARATHI = 'Marathi';
+const ENGLISH = 'English';
+
+const translations = {
+    // Titles
+    'साक्षीदारास समन्स': { [MARATHI]: 'साक्षीदारास समन्स', [ENGLISH]: 'SUMMONS TO WITNESS' },
+    'आरोपीस समन्स': { [MARATHI]: 'आरोपीस समन्स', [ENGLISH]: 'SUMMONS TO ACCUSED' },
+    'सामनेवाला यांस नोटीस': { [MARATHI]: 'सामनेवाला यांस नोटीस', [ENGLISH]: 'NOTICE TO RESPONDENT' },
+    // Headings
+    'court_title': { [MARATHI]: 'न्यायदंडाधिकारी प्रथमवर्ग,', [ENGLISH]: 'Judicial Magistrate First Class,' },
+    'court_subtitle': { [MARATHI]: '(न्यायालय क्रमांक १)', [ENGLISH]: '(Court No. 1)' },
+    'case_no_label': { [MARATHI]: 'केस क्रमांक', [ENGLISH]: 'Case No.' },
+    'current_date_label': { [MARATHI]: 'आज दिनांक', [ENGLISH]: 'Dated this' },
+    'to_label': { [MARATHI]: 'प्रति,', [ENGLISH]: 'To,' },
+    'forward_label': { [MARATHI]: 'यांना बजावणीसाठी अग्रेषीत', [ENGLISH]: 'For service through' },
+    'witness_table_title': { [MARATHI]: 'साक्षीदारांचे नांव', [ENGLISH]: 'Name of Witness' },
+    'accused_table_title': { [MARATHI]: 'आराेपी/सामनेवाला नांव', [ENGLISH]: 'Name of Accused/Respondent' },
+    'table_header_srno': { [MARATHI]: 'अ.क्र', [ENGLISH]: 'Sr. No.' },
+    'table_header_name': { [MARATHI]: 'साक्षीदाराचे नांव', [ENGLISH]: 'Name of Witness' },
+    'table_header_address': { [MARATHI]: 'राहणार', [ENGLISH]: 'Resident of (Address)' },
+    'table_header_accused_name': { [MARATHI]: 'आराेपी/सामनेवाला नांव', [ENGLISH]: 'Name of Accused/Respondent' },
+    'no_witness': { [MARATHI]: 'साक्षीदार उपलब्ध नाही', [ENGLISH]: 'No witness available' },
+    'footer_designation_1': { [MARATHI]: 'सहाय्यक अधिक्षक', [ENGLISH]: 'Assistant Superintendent' },
+    'footer_designation_2': { [MARATHI]: 'दिवाणी व फौजदारी न्यायालय,', [ENGLISH]: 'Civil and Criminal Court,' },
+};
+
+const getTranslation = (key, lang) => {
+    // Use the form type as the key directly for titles
+    if (key === 'formTitle') {
+        return translations[key] && translations[key][lang] ? translations[key][lang] : key;
+    }
+    
+    const category = key.replace(/_body_.*$/, '');
+    if (translations[key] && translations[key][lang]) {
+        return translations[key][lang];
+    }
+    // Handle form titles directly
+    if (Object.keys(translations).includes(key) && translations[key][lang]) {
+        return translations[key][lang];
+    }
+    return key; // Fallback to key if translation is missing
+};
+
+
+// =================================================================
+// PrintLayout Component (Internal - Pure JSX/Marathi/English Layout)
+// =================================================================
+
+const PrintLayout = React.memo(({ data, printLanguage }) => {
   const {
     formType, caseType, caseNo, accusedName, lawSection,
-    summonDate, currentDate, courtLocation, policeStation, court,
+    summonDate, currentDate, courtLocation, policeStation, court,courtLocationEnglish,
     witnesses
   } = data;
+  
+  const lang = printLanguage;
+  const t = (key) => getTranslation(key, lang);
+  const isMarathi = lang === MARATHI;
+
 
   const caseLabel = useMemo(() => {
+    const label = isMarathi ? t('case_no_label') : 'Case No.';
     if (caseType === 'R.C.C.' || caseType === 'S.C.C.') {
-      return `${caseType}. No.`;
+      return `${caseType}. ${label}`;
     }
-    return `${caseType} No.`;
-  }, [caseType]);
+    return `${caseType} ${label}`;
+  }, [caseType, isMarathi]);
 
 
   const formatDdMmYyyy = useCallback((dateString) => {
     if (!dateString) return '';
     const parts = dateString.split('-');
     if (parts.length !== 3) {
+      // Assuming 'DD/MM/YYYY' is already in place for currentDate
       return dateString;
     }
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
@@ -66,12 +124,14 @@ const PrintLayout = React.memo(({ data }) => {
     return null;
   }, []);
 
-  const renderWitnessRows = useCallback(() => {
-    if (witnesses.filter(w => w.name || w.address).length === 0) {
-      return (<tr key="no-witness"><td colSpan="3" style={{ textAlign: 'center' }}>साक्षीदार उपलब्ध नाही</td></tr>);
+  const renderWitnessRows = useCallback((type) => {
+    const tableHeaderNameKey = type === 'साक्षीदारास समन्स' ? 'table_header_name' : 'table_header_accused_name';
+    const parties = witnesses.filter(w => w.name || w.address);
+    if (parties.length === 0) {
+      return (<tr key="no-witness"><td colSpan="3" style={{ textAlign: 'center' }}>{t('no_witness')}</td></tr>);
     }
 
-    return witnesses.map((witness, index) => (
+    return parties.map((witness, index) => (
       <tr key={index + 1}>
         <td style={{ textAlign: 'center', width: '5%' }}>{index + 1}</td>
         <td style={{ width: '40%' }}>
@@ -82,7 +142,7 @@ const PrintLayout = React.memo(({ data }) => {
         </td>
       </tr>
     ));
-  }, [witnesses]);
+  }, [witnesses, t]);
 
   const accusedPlaceholder = accusedName || '.....................';
   const lawPlaceholder = lawSection || '.....................';
@@ -92,129 +152,134 @@ const PrintLayout = React.memo(({ data }) => {
   const policeStationPlaceholder = policeStation || '.....................';
   const caseNoPlaceholder = caseNo || '.....................';
 
-  const titleText = useMemo(() => {
-    switch (formType) {
-      case 'आरोपीस समन्स':
-        return 'आरोपीस समन्स';
-      case 'सामनेवाला यांस नोटीस':
-        return 'सामनेवाला यांस नोटीस';
-      case 'साक्षीदारास समन्स':
-      default:
-        return 'साक्षीदारास समन्स';
-    }
-  }, [formType]);
 
+  const titleText = t(formType);
+  console.log(formType,"tyep")
+  const partyTableTitle = formType === 'साक्षीदारास समन्स' ? t('witness_table_title') : t('accused_table_title');
+  const tableHeaderName = formType === 'साक्षीदारास समन्स' ? t('table_header_name') : t('table_header_accused_name');
+  
 
-  // Content based on Form Type (Pure JSX)
+  // Content based on Form Type 
   const mainContent = useMemo(() => {
     const spaceIndent = <span style={{ whiteSpace: 'pre' }}>&nbsp;&nbsp;&nbsp;&nbsp;</span>;
-    const noticeOrSummons = formType === 'आरोपीस समन्स' ? 'समन्स' : 'नोटीस';
 
     // साक्षीदारास समन्स (Witness Summons)
     if (formType === 'साक्षीदारास समन्स') {
+      if (isMarathi) {
+        return (
+          <div style={{ marginTop: '15px', lineHeight: "1.8" }}>
+            <p className="body-paragraph">
+              {spaceIndent}  ज्या अर्थी (आरोपीचे नांव) <span className="data-placeholder">{accusedPlaceholder}</span>  याने कायदा <span className="data-placeholder">{lawPlaceholder}</span>
+              प्रमाणे अपराध केला आहे अशी माझ्याकडे फिर्याद देण्यात आली आहे आणि मला असे दिसुन येते की, फिर्यादीपक्षातर्फे तुम्ही महत्वाचा पुरावा देण्याची शक्यता आहे.
+            </p>
+            <p className="body-paragraph">
+              {spaceIndent}  म्हणुन तुम्हाला याव्दारे या न्यायालयापुढे येत्या दिनांक <span className="data-placeholder">{summonDateFormatted}</span> रोजी सकाळी ठिक ११:०० वाजता उक्त फिर्यादीसंबंधाने तुम्हाला जे माहित आहे त्या बद्दल साक्ष देण्यासाठी उपस्थित होण्याचे आणि न्यायालयाचे परवानगीवाचून निघुन न जण्याचे समन्स पाठवण्यात येत आहे.
+            </p>
+            <p className="body-paragraph">
+              {spaceIndent}  या कामी रास्त सबबीशिवाय हयगय केली तर, तुम्हाला हजर राहण्याची सक्ती करण्यासाठी वॉरंट काढले जाईल.
+            </p>
+            <div style={{ lineHeight: 1.5, }}>
+              {renderCaseNumber(t('current_date_label'), currentDateFormatted)}
+            </div>
+          </div>
+        );
+      } else { // English Translation for Witness Summons
+        return (
+          <div style={{ marginTop: '15px', lineHeight: "1.8" }}>
+            <p className="body-paragraph">
+              {spaceIndent} Whereas a complaint has been made before me that  <span className="data-placeholder">{accusedPlaceholder}</span> has committed an offence punishable under {lawPlaceholder}, and it appears to me that you are likely to give material evidence for the prosecution.
+            </p>
+            <p className="body-paragraph">
+              {spaceIndent} You are hereby commanded to appear in this Court on the <span className="data-placeholder">{summonDateFormatted}</span> at 11:00 AM, to testify what you know concerning the said complaint, and not to depart thence without the permission of the Court.
+            </p>
+            <p className="body-paragraph">
+              {spaceIndent} If you neglect or fail to comply with this Summons without any reasonable excuse, a Warrant shall be issued for compelling your attendance.
+            </p>
+            <div style={{ lineHeight: 1.5, }}>
+              {renderCaseNumber('Dated this', currentDateFormatted)}
+            </div>
+          </div>
+        );
+      }
+    }
+
+    // आरोपीस समन्स / सामनेवाला यांस नोंटीस (Accused Summons / Respondent Notice)
+    if (isMarathi) {
       return (
         <div style={{ marginTop: '15px', lineHeight: "1.8" }}>
           <p className="body-paragraph">
-            {spaceIndent}  ज्या अर्थी (आरोपीचे नांव) <span className="data-placeholder">{accusedPlaceholder}</span>  याने कायदा <span className="data-placeholder">{lawPlaceholder}</span>
-            प्रमाणे अपराध केला आहे अशी माझ्याकडे फिर्याद देण्यात आली आहे आणि मला असे दिसुन येते की, फिर्यादीपक्षातर्फे तुम्ही महत्वाचा पुरावा देण्याची शक्यता आहे.
+            {spaceIndent} ज्या अर्थी उक्त आरोपीस/सा.वाला/यांस वरील खटल्यात कायदा <span className="data-placeholder">{lawPlaceholder}</span> मध्ये उत्तर देण्याकरीता तुमची उपस्थिती आवश्यक आहे.  त्याअर्थी तुम्ही न्यायदंडाधिकारी प्रथम वर्ग, मनमाड शहर यांचे न्यायालयात दिनांक <span className="data-placeholder">{summonDateFormatted}</span> या दिवशी सकाळी 10:30 वाजता जातीने स्वतः अगर वकीलां मार्फत उपस्थित राहावे.
           </p>
           <p className="body-paragraph">
-            {spaceIndent}  म्हणुन तुम्हाला याव्दारे या न्यायालयापुढे येत्या दिनांक <span className="data-placeholder">{summonDateFormatted}</span> रोजी सकाळी ठिक ११:०० वाजता उक्त फिर्यादीसंबंधाने तुम्हाला जे माहित आहे त्या बद्दल साक्ष देण्यासाठी उपस्थित होण्याचे आणि न्यायालयाचे परवानगीवाचून निघुन न जण्याचे समन्स पाठवण्यात येत आहे.
+            {spaceIndent} यात कसुर झाल्यास तुमचे विरूध्द पुढील कार्यवाही करणेत येईल याची नोंद घ्यावी.
           </p>
-          <p className="body-paragraph">
-            {spaceIndent}  या कामी रास्त सबबीशिवाय हयगय केली तर, तुम्हाला हजर राहण्याची सक्ती करण्यासाठी वॉरंट काढले जाईल.
-          </p>
+
           <div style={{ lineHeight: 1.5, }}>
-            {renderCaseNumber('आज दिनांक', currentDateFormatted)}
+            {renderCaseNumber(t('current_date_label'), currentDateFormatted)}
+          </div>
+        </div>
+      );
+    } else { // English Translation for Accused Summons / Respondent Notice
+      const partyType = formType === 'आरोपीस समन्स' ? 'Accused' : 'Respondent';
+      const orderType = formType === 'आरोपीस समन्स' ? 'Summons' : 'Notice';
+      return (
+        <div style={{ marginTop: '15px', lineHeight: "1.8" }}>
+          <p className="body-paragraph">
+            {spaceIndent} Whereas your presence is necessary to answer the charge in the above case under {lawPlaceholder}. You are hereby required to appear in the Court of the Judicial Magistrate First Class, Manmad City, either in person or through a Pleader, on the <span className="data-placeholder">{summonDateFormatted}</span> at 10:30 AM.
+          </p>
+          <p className="body-paragraph">
+            {spaceIndent} Take notice that in case of default, further proceedings will be taken against you.
+          </p>
+
+          <div style={{ lineHeight: 1.5, }}>
+            {renderCaseNumber('Dated this', currentDateFormatted)}
           </div>
         </div>
       );
     }
 
-    // आरोपीस समन्स / सामनेवाला यांस नोंटीस
-    return (
-      <div style={{ marginTop: '15px', lineHeight: "1.8" }}>
-        <p className="body-paragraph">
-          {/* {spaceIndent}  ज्या अर्थी **(आरोपीचे नांव)** <span className="data-placeholder">{accusedPlaceholder}</span> याने कायदा <span className="data-placeholder">{lawPlaceholder}</span> प्रमाणे अपराध केला आहे अशी माझ्याकडे फिर्याद देण्यात आली आहे. */}
-          {spaceIndent} ज्या अर्थी उक्त आरोपीस/सा.वाला/यांस वरील खटल्यात कायदा <span className="data-placeholder">{lawPlaceholder}</span>  	      मध्ये उत्तर देण्याकरीता तुमची उपस्थिती आवश्यक आहे.  त्याअर्थी तुम्ही न्यायदंडाधिकारी प्रथम वर्ग, मनमाड शहर  यांचे न्यायालयात दिनांक <span className="data-placeholder">{summonDateFormatted}</span>   या दिवशी सकाळी 10:30 वाजता जातीने स्वतः अगर वकीलां मार्फत उपस्थित राहावे.
-
-
-        </p>
-        <p className="body-paragraph">
-          {spaceIndent} यात कसुर झाल्यास तुमचे विरूध्द पुढील कार्यवाही करणेत येईल याची नोंद घ्यावी.
-          {/* {spaceIndent}  म्हणून तुम्हाला याव्दारे या न्यायालयापुढे येत्या दिनांक <span className="data-placeholder">{summonDateFormatted}</span> रोजी सकाळी ठिक ११:०० वाजता उक्त फिर्यादीसंबंधाने हजर राहण्याचे {noticeOrSummons} पाठवण्यात येत आहे. */}
-        </p>
-
-        <div style={{ lineHeight: 1.5, }}>
-          {renderCaseNumber('आज दिनांक', currentDateFormatted)}
-        </div>
-        {/* <p className="body-paragraph">
-          {spaceIndent}  या कामी रास्त सबबीशिवाय हयगय केली तर, तुम्हाला हजर राहण्याची सक्ती करण्यासाठी वॉरंट काढले जाईल.
-        </p> */}
-      </div>
-    );
-
-  }, [formType, accusedPlaceholder, lawPlaceholder, summonDateFormatted]);
+  }, [formType, accusedPlaceholder, lawPlaceholder, summonDateFormatted, isMarathi, t, currentDateFormatted]);
 
 
   return (
-    // ⚠️ Note: A4-page class is applied in print styles, not here.
-    <div className="a4-page-content" style={{ fontSize: "13pt", marginTop: "50px" }}>
+    <div className="a4-page-content" style={{ fontSize: isMarathi ? "13pt" : "11pt", marginTop: "50px" }}>
 
       {/* 1. शीर्षक / न्यायालय */}
-      <p className="align-center court-title" style={{ fontWeight: "bold", fontSize: "16pt", marginBottom: '5px' }}>
-        {court}
-        <span className="data-placeholder">{courtLocationPlaceholder}</span>
+      <p className="align-center court-title" style={{ fontWeight: "bold", fontSize: isMarathi ? "16pt" : "14pt", marginBottom: '5px' }}>
+        {isMarathi ? court : t('court_title')}
+        <span className="data-placeholder">{isMarathi?courtLocationPlaceholder:courtLocationEnglish}</span>
       </p>
       <p className="align-center" style={{ marginTop: '0', marginBottom: '15px', fontSize: '11pt' }}>
-        (न्यायालय क्रमांक १)
+        {t('court_subtitle')}
       </p>
-      <h2 className="align-center court-slogan" style={{ fontSize: '18pt', margin: '15px 0 25px 0' }}>{titleText}</h2>
+      <h2 className="align-center court-slogan" style={{ fontSize: isMarathi ? '18pt' : '16pt', margin: '15px 0 25px 0' }}>{titleText}</h2>
 
       {/* 2. केस क्रमांक आणि तारीख */}
-      {/* <div className="case-numbers" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '11pt' }}> */}
       <div style={{ lineHeight: 1.5, textAlign: 'right' }}>
         {renderCaseNumber(caseLabel, caseNoPlaceholder)}
-        {/* {caseType === 'R.C.C.' && renderCaseNumber('S.C.C. No.', '.....................')} */}
-        {/* </div> */}
-
       </div>
 
       {/* 3. प्राप्तकर्ता पत्ता (पोलीस स्टेशन) */}
       <div style={{ marginTop: '10px', marginBottom: '10px', lineHeight: "1.6" }}>
-        <p style={{ marginBottom: '0' }}>प्रति,</p>
-        <p style={{ marginBottom: '0' }}>पोलीस निरीक्षक,</p>
-        <p style={{ marginTop: '0' }}><span className="data-placeholder">{policeStationPlaceholder}</span> पोलीस स्टेशन, यांना बजावणीसाठी अग्रेषीत</p>
+        <p style={{ marginBottom:"3px" }}>{t('to_label')}</p>
+        {policeStationPlaceholder.split(",").length > 1 ? policeStationPlaceholder.split(",").map((x) => 
+       <p style={{ margin: '0', }}><span className="data-placeholder">{x}</span> </p>) : <p style={{ marginTop: '0' }}><span className="data-placeholder">{policeStationPlaceholder}</span> </p>}
+        <p style={{ margin: '0' }}> &nbsp;&nbsp;&nbsp; {t('forward_label')}</p>
       </div>
 
-      {/* 4. साक्षीदारांची यादी (फक्त साक्षीदारास समन्ससाठी) */}
-      {formType === 'साक्षीदारास समन्स' ? (
-        <div style={{ marginTop: '10px', }}>
-          {/* <h3 className="align-center print-subtitle" style={{ marginTop: '20px', marginBottom: '5px', fontSize: '12pt', fontWeight: 'bold' }}>साक्षीदारांचे नांव</h3> */}
-          <table className="witness-table" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '5px', fontSize: '10pt' }}>
-            <thead style={{ fontSize: "15px" }}>
-              <tr>
-                <th style={{ width: '5%', border: '1px solid black', padding: '4px 6px' }}>अ.क्र</th>
-                <th style={{ width: '40%', border: '1px solid black', padding: '4px 6px' }}>साक्षीदाराचे नांव</th>
-                <th style={{ width: '55%', border: '1px solid black', padding: '4px 6px' }}>राहणार</th>
-              </tr>
-            </thead >
-            <tbody style={{ fontSize: "15px" }}>{renderWitnessRows()}</tbody>
-          </table>
-        </div>
-      ) : <div style={{ marginTop: '10px' }}>
-        {/* <h3 className="align-center print-subtitle" style={{ marginTop: '20px', marginBottom: '5px', fontSize: '12pt', fontWeight: 'bold' }}> आराेपी/सामनेवाला नांव</h3> */}
-        <table className="witness-table" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '5px', fontSize: '10pt' }}>
+      {/* 4. साक्षीदार/आरोपी/सामनेवाला यादी */}
+      <div style={{ marginTop: '10px', }}>
+        <table className="witness-table" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '5px', fontSize: isMarathi ? '10pt' : '11pt' }}>
           <thead style={{ fontSize: "15px" }}>
             <tr>
-              <th style={{ width: '5%', border: '1px solid black', padding: '4px 6px' }}>अ.क्र</th>
-              <th style={{ width: '40%', border: '1px solid black', padding: '4px 6px' }}>आराेपी/सामनेवाला नांव</th>
-              <th style={{ width: '55%', border: '1px solid black', padding: '4px 6px' }}>राहणार</th>
+              <th style={{ width: '5%', border: '1px solid black', padding: '4px 6px' }}>{t('table_header_srno')}</th>
+              <th style={{ width: '40%', border: '1px solid black', padding: '4px 6px' }}>{tableHeaderName}</th>
+              <th style={{ width: '55%', border: '1px solid black', padding: '4px 6px' }}>{t('table_header_address')}</th>
             </tr>
-          </thead>
-          <tbody style={{ fontSize: "15px" }}>{renderWitnessRows()}</tbody>
+          </thead >
+          <tbody style={{ fontSize: "15px" }}>{renderWitnessRows(formType)}</tbody>
         </table>
-      </div>}
+      </div>
 
       {/* 5. समन्सचा मुख्य भाग */}
       {mainContent}
@@ -222,9 +287,9 @@ const PrintLayout = React.memo(({ data }) => {
       {/* 6. तळटीप/स्वाक्षरी ब्लॉक */}
       <div className="footer-section" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '50px' }}>
         <div className="signature-block align-right" style={{ lineHeight: 1.6, width: '40%', textAlign: 'center' }}>
-          <p style={{ marginBottom: '0', marginTop: '0' }}>सहाय्यक अधिक्षक</p>
-          <p style={{ marginBottom: '0', marginTop: '0' }}>दिवाणी व फौजदारी न्यायालय,</p>
-          <p style={{ marginBottom: '0', marginTop: '0' }}><span >{courtLocationPlaceholder}</span> </p>
+          <p style={{ marginBottom: '0', marginTop: '0' }}>{t('footer_designation_1')}</p>
+          <p style={{ marginBottom: '0', marginTop: '0' }}>{t('footer_designation_2')}</p>
+          <p style={{ marginBottom: '0', marginTop: '0' }}><span >{isMarathi?courtLocation:courtLocationEnglish}</span> </p>
         </div>
       </div>
     </div>
@@ -237,6 +302,8 @@ const PrintLayout = React.memo(({ data }) => {
 
 const SummonsFormApp = () => {
   const [formData, setFormData] = useState(initialFormData);
+  // ✨ NEW STATE FOR PRINT LANGUAGE
+  const [printLanguage, setPrintLanguage] = useState(MARATHI); 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -278,50 +345,41 @@ const SummonsFormApp = () => {
     }));
   };
 
-  const caseLabelText = useMemo(() => {
-    if (formData.caseType === 'R.C.C.' || formData.caseType === 'S.C.C.') {
-      return `${formData.caseType}. No.:`;
-    }
-    return `${formData.caseType} No.:`;
-  }, [formData.caseType]);
+  const handlePrintLanguageChange = (lang) => {
+      setPrintLanguage(lang);
+  };
 
-  const showWitnesses = formData.formType === 'साक्षीदारास समन्स';
+  const caseLabelText = useMemo(() => {
+    const langLabel = printLanguage === MARATHI ? 'क्रमांक' : 'No.';
+    if (formData.caseType === 'R.C.C.' || formData.caseType === 'S.C.C.') {
+      return `${formData.caseType}. ${langLabel}:`;
+    }
+    return `${formData.caseType} ${langLabel}:`;
+  }, [formData.caseType, printLanguage]);
+
 
   // =================================================================
   // Print Handler (Adjusted Styles)
   // =================================================================
   const handlePrint = () => {
 
-    const getPartyLabel = (formType) => {
-      switch (formType) {
-        case 'साक्षीदारास समन्स':
-          // साक्षीदारास समन्स मध्ये, आपण आरोपीचे नाव 'बनाम' म्हणून वापरतो.
-          return 'आरोपीचे नांव';
-        case 'सामनेवाला यांस नोटीस':
-          return 'सामनेवाल्याचे नांव';
-        case 'आरोपीस समन्स':
-          return 'आरोपीचे नांव';
-        default:
-          return 'व्यक्तीचे नांव';
-      }
-    };
-
     const printContent = document.getElementById('print-area').innerHTML;
-
+    const isMarathiPrint = printLanguage === MARATHI;
+    
     const printWindow = window.open('', '_blank');
-    printWindow.document.write('<html><head><title>कोर्ट दस्तऐवज</title>');
+    printWindow.document.write('<html><head><title>Court Document</title>');
 
     // 🎨 A4 आणि प्रिंटसाठी आवश्यक स्टाईल्स (Layout FIXES Applied)
     printWindow.document.write('<style>');
     printWindow.document.write(`
       @page { size: A4; margin: 15mm 20mm 15mm 20mm; } 
       body { 
-          font-family: Arial, "Noto Sans CJK JP", sans-serif; 
-          font-size: 11pt;
+          font-family: ${isMarathiPrint ? '"Noto Sans Devanagari", Arial, sans-serif' : 'Arial, sans-serif'};
+          font-size: ${isMarathiPrint ? '13pt' : '11pt'};
           line-height: 1.4;
           margin: 0;
           color: #000;
-          padding-top: 20px; /* Give some top margin */
+          padding-top: 20px;
       }
       .a4-page-content {
           width: 100%;
@@ -332,41 +390,31 @@ const SummonsFormApp = () => {
       
       /* Header & Title Styles */
       .court-title { 
-          font-size: 14pt; 
+          font-size: ${isMarathiPrint ? '16pt' : '14pt'}; 
           margin-bottom: 2px; 
           line-height: 1.2; 
           font-weight: bold;
       }
       .court-slogan { 
-          font-size: 20pt; 
-          margin: 15px 0 25px 0; /* Increased margin for separation */
+          font-size: ${isMarathiPrint ? '18pt' : '16pt'}; 
+          margin: 15px 0 25px 0; 
           font-weight: bold; 
           border-bottom: 2px solid #000; 
           padding-bottom: 5px;
       }
-      .case-numbers { 
-          display: flex; 
-          justify-content: space-between; 
-          margin-top: 10px; /* Adjusted spacing */
-          font-size: 11pt; /* Adjusted size */
-          line-height: 1.5;
-      }
-      .party-info { font-size: 11pt; line-height: 1.5; margin-bottom: 15px; }
-      .party-line { margin-bottom: 5px; }
       
       /* Body Content Styles */
       .body-paragraph {
           text-align: justify;
-          text-indent: 0; /* Removing text-indent for consistent spacing */
-          margin-bottom: 12px; /* Increased margin between paragraphs */
-          line-height: 1.6; /* Increased line height */
+          text-indent: 0;
+          margin-bottom: 12px;
+          line-height: 1.6; 
       }
-      .body-paragraph span:first-child { /* Targets the JSX span used for indention */
+      .body-paragraph span:first-child { 
           display: inline-block;
-          width: 2em; /* Explicitly defining the indent width */
+          width: 2em;
       }
       .data-placeholder { 
-          // text-decoration: underline; 
           font-weight: bold; 
           padding: 0 4px; 
           display: inline-block; 
@@ -374,18 +422,11 @@ const SummonsFormApp = () => {
       }
       
       /* Witness Table Styles */
-      .print-subtitle { 
-          margin-top: 20px !important; 
-          margin-bottom: 5px !important; 
-          font-size: 12pt;
-          font-weight: bold;
-          text-align: center;
-      }
       .witness-table { 
           width: 100%; 
           border-collapse: collapse; 
           margin-top: 5px; 
-          font-size: 10pt; 
+          font-size: ${isMarathiPrint ? '10pt' : '11pt'}; 
       }
       .witness-table th, .witness-table td { 
           border: 1px solid black; 
@@ -395,18 +436,18 @@ const SummonsFormApp = () => {
 
       /* Footer Styles */
       .footer-section { 
-          margin-top: 50px; /* Increased margin to push to bottom */
+          margin-top: 50px;
           display: flex; 
           justify-content: flex-end; 
           align-items: flex-end; 
           width: 100%;
-          font-size: 11pt;
+          font-size: ${isMarathiPrint ? '11pt' : '10pt'};
       }
       .signature-block { 
           text-align: center;
           width: 40%;
           line-height: 1.3;
-          padding-top: 5px; /* Space above signature lines */
+          padding-top: 5px;
       }
       @media print {
         -webkit-print-color-adjust: exact !important; 
@@ -414,6 +455,12 @@ const SummonsFormApp = () => {
       }
     `);
     printWindow.document.write('</style>');
+    
+    // Add Noto Sans Devanagari link for Marathi if needed
+    if (isMarathiPrint) {
+        printWindow.document.write('<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&display=swap" rel="stylesheet">');
+    }
+
     printWindow.document.write('</head><body>');
     printWindow.document.write(printContent);
     printWindow.document.write('</body></html>');
@@ -534,6 +581,25 @@ const SummonsFormApp = () => {
       <div className="form-container">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">कोर्ट दस्तऐवज निर्मिती (Court Document Generator)</h2>
 
+        {/* -------------------------------------- */}
+        {/* ✨ 0. प्रिंट भाषा निवड (NEW) */}
+        {/* -------------------------------------- */}
+        <h3 className="text-xl font-semibold mt-4 mb-3 text-red-700">०. प्रिंट भाषा निवडा (Print Language)</h3>
+        <div className="radio-group">
+          {[MARATHI, ENGLISH].map(lang => (
+            <label key={lang}>
+              <input
+                type="radio"
+                name="printLanguage"
+                value={lang}
+                checked={printLanguage === lang}
+                onChange={() => handlePrintLanguageChange(lang)}
+              />
+              <span>{lang}</span>
+            </label>
+          ))}
+        </div>
+
         <button onClick={handlePrint} className="print-button">
           प्रिंट करा 🖨️
         </button>
@@ -587,7 +653,7 @@ const SummonsFormApp = () => {
           </div>
           <div className="input-group">
             <label>न्यायालयाचे ठिकाण:</label>
-            <input type="text" name="courtLocation" value={formData.courtLocation} onChange={handleInputChange} placeholder="मनमाड शहर" />
+            <input type="text" name="courtLocation" value={printLanguage===MARATHI?formData.courtLocation:formData.courtLocationEnglish} onChange={handleInputChange} placeholder="मनमाड शहर" />
           </div>
         </div>
         <div className="input-group">
@@ -619,8 +685,6 @@ const SummonsFormApp = () => {
           }
           <div className="input-group">
             <label>कायदा/कलम:</label>
-            {/* <input type="text" name="lawSection" value={formData.lawSection} onChange={handleInputChange} placeholder="उदा: IPC कलम 323, 504" /> */}
-
             <input
               type="text"
               name="lawSection"
@@ -634,7 +698,7 @@ const SummonsFormApp = () => {
             {/* The <datalist> provides suggestions but allows other input */}
             <datalist id="act-suggestions">
               {actOptions.map((option) => (
-                <option key={option.value} value={option.value}>
+                <option key={option.value} value={printLanguage===MARATHI?option.value:option.label}>
                   {option.label}
                 </option>
               ))}
@@ -642,9 +706,7 @@ const SummonsFormApp = () => {
           </div>
         </div>
 
-        {/* साक्षदार यादी (साक्षीदारास समन्ससाठीच) */}
-        {/* {showWitnesses && ( */}
-
+        {/* साक्षदार यादी */}
         <>
           <h3 className="text-xl font-semibold mt-6 mb-4 text-purple-700">४. {formData.formType} नांव</h3>
           <table className="witness-input-table">
@@ -684,8 +746,7 @@ const SummonsFormApp = () => {
             + साक्षदार जोडा
           </button>
         </>
-        {/* )} */}
-
+        
         {/* आजची तारीख */}
         <div className="input-group" style={{ marginTop: '30px' }}>
           <label>आजची तारीख (दिनांक - DD/MM/YYYY):</label>
@@ -701,7 +762,7 @@ const SummonsFormApp = () => {
 
         {/* प्रिंटसाठी लपवलेला भाग - येथे PrintLayout वापरला जातो */}
         <div id="print-area" style={{ display: 'none' }}>
-          <PrintLayout data={formData} />
+          <PrintLayout data={formData} printLanguage={printLanguage} />
         </div>
       </div>
     </div>
