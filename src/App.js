@@ -34,7 +34,8 @@ const App = () => {
 
     // अर्ज उप-मेनू (Applications Sub-menu)
     const applicationForms = [
-        { id: 'summons', name: 'समन्स अर्ज (Summons Application)', component: SummonsFormInput },
+                { id: 'summons', name: 'समन्स / नोटीस (Summons/Notice)', component: SummonsFormInput },
+
         { id: 'warrant', name: 'समन्स अर्ज (NI 138)', component: NegotiableSummons },
         { id: 'warrant2', name: 'वॉरंट अर्ज (Warrant Application)', component: ArrestWarrantApp },
         // { id: 'muddemal', name: 'मुद्देमाल व्यवस्थापन (Muddemal)', component: MuddemalManagement },
