@@ -47,12 +47,12 @@ const ArrestWarrantDocument = ({ data }) => {
         : 'Non Bailable Warrant (अजामीनपात्र अधिपत्र)';
 
 
-    const descriptiveWarrant =(type)=>{
-        if (type=='B.W.'){
+    const descriptiveWarrant = (type) => {
+        if (type == 'B.W.') {
             return 'Bailable Warrant (जामीनपात्र अधिपत्र)'
-        }else if(type=="N.B.W."){
+        } else if (type == "N.B.W.") {
             return 'Non Bailable Warrant (अजामीनपात्र अधिपत्र)'
-        } else if(type=="A.W."){
+        } else if (type == "A.W.") {
             return "Arrest Warrant (पकड वॉरंट)"
         }
 
@@ -66,7 +66,17 @@ const ArrestWarrantDocument = ({ data }) => {
     return (
         <div className="printable-area" id="print-warrant-content">
             <div className="warrant-document">
+                {/* <div style={{lineHeight:"0.8",textAlign:"right"}}>
+<p>{isMarathi?"जा.क्र.":"O.No"}/&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/202</p>
+    <p>{isMarathi?"दिनांक :":"Date :"} &nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;  &nbsp; /202</p>
+      </div> */}
 
+
+
+                <div style={{ lineHeight: "1.7", textAlign: "right" ,marginBottom:"15px"}}>
+                    <p style={{textAlign: "right"}}> जा.क्र. : / &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/202</p>
+                    <p style={{textAlign: "right"}}>दिनांक  &nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;  &nbsp; /202</p>
+                </div>
                 {/* Court and Heading */}
                 <p className="align-center court-title" style={{ fontSize: "20px", fontWeight: 'bold', textDecoration: "underline", marginBottom: '5px' }}>
                     <span className="data-placeholder">{data.courtName}</span>
@@ -106,12 +116,12 @@ const ArrestWarrantDocument = ({ data }) => {
                 <div style={{ marginTop: '20px', textAlign: 'justify' }}>
 
                     <p className="warrant-paragraph" style={{ marginBottom: '15px' }}>
-                        &nbsp;&nbsp;&nbsp; &nbsp; ज्यापेक्षा {data.warrantType=="A.W." ? <span>सामनेवाला</span> : <span>आरोपी</span>}  नामे <span className="data-placeholder bold-text">{data.accusedName}</span> राह.
+                        &nbsp;&nbsp;&nbsp; &nbsp; ज्यापेक्षा {data.warrantType == "A.W." ? <span>सामनेवाला</span> : <span>आरोपी</span>}  नामे <span className="data-placeholder bold-text">{data.accusedName}</span> राह.
                         <span className="data-placeholder bold-text"> &nbsp;{data.accusedAddress} &nbsp;</span> यावर
                         {/* *** UPDATED OFFENSE SECTION *** */}
                         <span className="data-placeholder bold-text"> &nbsp;{offenseDetail}</span>  &nbsp;या अपराधाचा आरोप आलेला आहे,
                         {/* ******************************* */}
-                        त्यापेक्षा तुम्ही सदरहू  {data.warrantType=="A.W." ? <span>सामनेवाला</span> : <span>आरोपी</span>} <span className="data-placeholder bold-text"> &nbsp;&nbsp;{data.accusedName} &nbsp;&nbsp;</span> यास धरून माझ्यापुढे आणावे असा तुम्हास या वॉरंटद्वारे हुकूम केला आहे.
+                        त्यापेक्षा तुम्ही सदरहू  {data.warrantType == "A.W." ? <span>सामनेवाला</span> : <span>आरोपी</span>} <span className="data-placeholder bold-text"> &nbsp;&nbsp;{data.accusedName} &nbsp;&nbsp;</span> यास धरून माझ्यापुढे आणावे असा तुम्हास या वॉरंटद्वारे हुकूम केला आहे.
                         यात लिहिल्याप्रमाणे तुम्ही चुकू नये.
                     </p>
 
@@ -154,8 +164,8 @@ const ArrestWarrantDocument = ({ data }) => {
                         </p>
                     </div>
                 </div>
-                {(data.warrantType === "R.W." ||data.warrantType ===  "A.W.") &&
-                <div className="warrant-document"><p style={{marginTop:"100px"}}> <span style={{fontWeight:"bold"}}>टिप :</span>  सामनेवाल्याने रूपये   <span style={{fontWeight:"bold"}}>  &nbsp; {data.personalBondAmount}&nbsp;</span> भरल्यास त्यास मुक्त करून रक्कम या न्यायालयाकडे जमा करावी</p></div>
+                {(data.warrantType === "R.W." || data.warrantType === "A.W.") &&
+                    <div className="warrant-document"><p style={{ marginTop: "100px" }}> <span style={{ fontWeight: "bold" }}>टिप :</span>  सामनेवाल्याने रूपये   <span style={{ fontWeight: "bold" }}>  &nbsp; {data.personalBondAmount}&nbsp;</span> भरल्यास त्यास मुक्त करून रक्कम या न्यायालयाकडे जमा करावी</p></div>
                 }
 
             </div>
@@ -331,7 +341,7 @@ const ArrestWarrantApp = () => {
             min-height: 297mm; /* A4 height */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
             background-color: white;
-            padding: 45mm 25mm; 
+            padding: 30mm 25mm; 
             box-sizing: border-box;
             /* Use Devanagari friendly fonts */
             font-family: 'Lohit Devanagari', 'Arial Unicode MS', 'Mangal', sans-serif; 
@@ -523,7 +533,7 @@ const ArrestWarrantApp = () => {
                         />
                         **SCC** (Summary Criminal Case)
                     </label>
-                     <label>
+                    <label>
                         <input
                             type="radio"
                             name="caseType"
