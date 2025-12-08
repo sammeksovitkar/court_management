@@ -133,7 +133,7 @@ const actOptions = [
     // { value: "Bombay Prohibition", label: "Bombay Prohibition" },
     { value: "महाराष्ट्र दारूबंदी अधिनियम", label: "Maharashtra Prohibition Act" },
      { value: "शस्त्रास्त्र कायदा", label: "Arms Act" },
-{ value: "महाराष्ट जुगार प्रतिबंध अधिनियम", label: "Bombay Prevention of Gambling Act" },
+{ value: "महाराष्ट जुगार प्रतिबंध अधिनियम", label: "Bombay Prevention of Gambling Act" } ]
       
 
 const formatDate = (isoDate) => {
