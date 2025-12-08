@@ -294,7 +294,7 @@ const ArrestWarrantDocument = ({ data, language }) => {
         <div className="printable-area" id="print-warrant-content" style={{ fontFamily: language === 'Marathi' ? 'Lohit Devanagari, Arial Unicode MS, Mangal, sans-serif' : 'Arial, sans-serif' }}>
             <div className="warrant-document">
                 <div style={{ lineHeight: "1.7", textAlign: "right", marginBottom: "15px" }}>
-                    <p style={{ textAlign: "right" }}> {translatedFixedData.outWordNo} / &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/202</p>
+                    <p style={{ textAlign: "right" }}> {translatedFixedData.outWordNo}  &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/202</p>
                     <p style={{ textAlign: "right" }}>{translatedFixedData.date} &nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;  &nbsp; /202</p>
                 </div>
 
