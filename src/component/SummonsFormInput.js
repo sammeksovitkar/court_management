@@ -33,6 +33,8 @@ const actOptions = [
     { value: "Negotiable Instruments Act", label: "NI " },
     { value: "Gambling Act", label: "Gambling Act" },
     { value: "Bombay Prohibition", label: "Bombay Prohibition" },
+   { value: "कौटुंबिक हिंसाचारापासून महिलांचे संरक्षण कायदा, २००५, कलम", label: "Protection of Women from Domestic Violence Act, 2005, Section" },
+
 ];
 
 // =================================================================
