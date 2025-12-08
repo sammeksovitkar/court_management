@@ -8,54 +8,78 @@ const today = new Date().toISOString().substring(0, 10);
 // ====================================================================================
 
 // Default data in Marathi 
+// important 
+const courtInfo = {
+    policeStation: {
+        mar: 'मनमाड शहर',
+        eng: 'Manmad City'
+    },
+    courtName: {
+        mar: 'न्यायदंडाधिकारी, प्रथम वर्ग, मनमाड शहर ता.नांदगाव जिल्हा नाशिक',
+        eng: 'Judicial Magistrate First Class, Manmad City, Tal. Nandgaon, Dist. Nashik'
+    },
+    talukaDist: {
+        mar: "ता.नांदगाव, जिल्हा नाशिक",
+        eng: "Tal. Nandgaon, Dist. Nashik"
+    },
+    policeStationTaluka: {
+        mar: 'नांदगाव',
+        eng: "Nandgaon"
+    },
+    policeStationDistrict: {
+        mar: 'नाशिक',
+        eng: "Nashik"
+    },
+};
+
+// Assuming 'today' is a defined variable (e.g., const today = new Date().toLocaleDateString('en-GB');)
+
 const defaultDataMarathi = {
-    courtName: 'न्यायदंडाधिकारी, प्रथम वर्ग, मनमाड शहर ता.नांदगाव जिल्हा नाशिक',
-    talukaDist: "ता.नांदगाव, जिल्हा नाशिक",
+    courtName: courtInfo.courtName.mar,
+    talukaDist: courtInfo.talukaDist.mar,
     warrantType: '', 
     caseType: '',     
     caseNo: '',
-    policeStationName: 'मनमाड शहर',
-    policeStationTaluka: 'नांदगाव',
-    policeStationDistrict: 'नाशिक',
+    policeStationName: courtInfo.policeStation.mar,
+    policeStationTaluka: courtInfo.policeStationTaluka.mar,
+    policeStationDistrict: courtInfo.policeStationDistrict.mar,
     accusedName: '',
     accusedAddress: '',
     act: '',
     section: '',
-    appearanceDate: today,
+    appearanceDate: today, // Placeholder for the 'today' variable
     personalBondAmount: '', 
     suretyAmount1: '', 
     suretyAmount2: '', 
-    issueDate: today, 
-    courtLocationFooter: 'मनमाड',
-    date:"दिनांक : ",
-    outWordNo:"जा. क्र :"
+    issueDate: today, // Placeholder for the 'today' variable
+    courtLocationFooter: courtInfo.policeStation.mar, // Using police station name for footer location
+    date: "दिनांक : ",
+    outWordNo: "जा. क्र :"
 };
 
 // Translated default data for English
 const defaultDataEnglish = {
-    courtName: 'Judicial Magistrate First Class, Manmad City, Tal. Nandgaon, Dist. Nashik',
-    talukaDist: "Tal. Nandgaon, Dist. Nashik",
+    courtName: courtInfo.courtName.eng,
+    talukaDist: courtInfo.talukaDist.eng,
     warrantType: '', 
     caseType: '',     
     caseNo: '',
-    policeStationName: 'Manmad City',
-    policeStationTaluka: 'Nandgaon',
-    policeStationDistrict: 'Nashik',
+    policeStationName: courtInfo.policeStation.eng,
+    policeStationTaluka: courtInfo.policeStationTaluka.eng,
+    policeStationDistrict: courtInfo.policeStationDistrict.eng,
     accusedName: '',
     accusedAddress: '',
     act: '',
     section: '',
-    appearanceDate: today,
+    appearanceDate: today, // Placeholder for the 'today' variable
     personalBondAmount: '', 
     suretyAmount1: '', 
     suretyAmount2: '', 
-    issueDate: today, 
-    courtLocationFooter: 'Manmad',
-    date:"Date :",
-    outWordNo:"O.No :"
-
+    issueDate: today, // Placeholder for the 'today' variable
+    courtLocationFooter: courtInfo.policeStation.eng, // Using police station name for footer location
+    date: "Date :",
+    outWordNo: "O.No :"
 };
-
 // ====================================================================================
 // --- 2. TRANSLATION MAPS AND UTILITIES ---
 // ====================================================================================
@@ -133,8 +157,14 @@ const actOptions = [
     // { value: "Bombay Prohibition", label: "Bombay Prohibition" },
     { value: "महाराष्ट्र दारूबंदी अधिनियम", label: "Maharashtra Prohibition Act" },
      { value: "शस्त्रास्त्र कायदा", label: "Arms Act" },
-{ value: "महाराष्ट जुगार प्रतिबंध अधिनियम", label: "Bombay Prevention of Gambling Act" } ]
+{ value: "महाराष्ट जुगार प्रतिबंध अधिनियम", label: "Bombay Prevention of Gambling Act" },
       
+      
+
+    
+
+    
+];
 
 const formatDate = (isoDate) => {
     if (!isoDate || isoDate.length !== 10) return '...............';
@@ -296,11 +326,12 @@ const ArrestWarrantDocument = ({ data, language }) => {
     return (
         <div className="printable-area" id="print-warrant-content" style={{ fontFamily: language === 'Marathi' ? 'Lohit Devanagari, Arial Unicode MS, Mangal, sans-serif' : 'Arial, sans-serif' }}>
             <div className="warrant-document">
-                <div style={{ lineHeight: "1.7", textAlign: "right", marginBottom: "15px" }}>
-                    <p style={{ textAlign: "right" }}> {translatedFixedData.outWordNo}  &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/202</p>
-                    <p style={{ textAlign: "right" }}>{translatedFixedData.date} &nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;  &nbsp; /202</p>
-                </div>
-
+              {(data.policeStationName !== courtInfo.policeStation.mar && data.policeStationName !== courtInfo.policeStation.eng) ? 
+  <div style={{ lineHeight: "1.7", textAlign: "right", marginBottom: "15px" }}>
+    <p style={{ textAlign: "right" }}> {translatedFixedData.outWordNo} / &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/202</p>
+    <p style={{ textAlign: "right" }}>{translatedFixedData.date} &nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;  &nbsp; /202</p>
+  </div>
+:""}
                 {/* Court and Heading (FIXED FOR TRANSLATION) */}
                 <p className="align-center court-title" style={{ fontSize: "20px", fontWeight: 'bold', textDecoration: "underline", marginBottom: '5px' }}>
                     <span className="data-placeholder">{translatedFixedData.courtName}</span>
