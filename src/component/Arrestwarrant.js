@@ -130,8 +130,11 @@ const actOptions = [
     { value: "भारतीय नागरिक सुरक्षा संहिता", label: "Bharatiya Nagarik Suraksha Sanhita" },
     { value: "Negotiable Instruments Act", label: "Negotiable Instruments Act" },
     { value: "Gambling Act", label: "Gambling Act" },
-    { value: "Bombay Prohibition", label: "Bombay Prohibition" },
-];
+    // { value: "Bombay Prohibition", label: "Bombay Prohibition" },
+    { value: "महाराष्ट्र दारूबंदी अधिनियम", label: "Maharashtra Prohibition Act" },
+     { value: "शस्त्रास्त्र कायदा", label: "Arms Act" },
+{ value: "महाराष्ट जुगार प्रतिबंध अधिनियम", label: "Bombay Prevention of Gambling Act" },
+      
 
 const formatDate = (isoDate) => {
     if (!isoDate || isoDate.length !== 10) return '...............';
