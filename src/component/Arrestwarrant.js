@@ -328,7 +328,7 @@ const ArrestWarrantDocument = ({ data, language }) => {
             <div className="warrant-document">
               {(data.policeStationName !== courtInfo.policeStation.mar && data.policeStationName !== courtInfo.policeStation.eng) ? 
   <div style={{ lineHeight: "1.7", textAlign: "right", marginBottom: "15px" }}>
-    <p style={{ textAlign: "right" }}> {translatedFixedData.outWordNo} / &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/202</p>
+    <p style={{ textAlign: "right" }}> {translatedFixedData.outWordNo}  &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/202</p>
     <p style={{ textAlign: "right" }}>{translatedFixedData.date} &nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;  &nbsp; /202</p>
   </div>
 :""}
@@ -367,12 +367,12 @@ const ArrestWarrantDocument = ({ data, language }) => {
                     {content.mainPara}
 
                     {/* Conditional Bail/Surety Clause (Only for Bailable Warrant) */}
-                    {data.warrantType === 'B.W.' && (
+                    {/* {data.warrantType === 'B.W.' && ( */}
                         <div className="bail-clause" style={{ marginBottom: '15px', border: '1px dashed #ccc', padding: '10px', background: '#f9f9f9', borderRadius: '4px' }}>
                             <p style={{ fontWeight: 'bold', textDecoration: 'underline', margin: '0 0 5px 0' }}>{content.bailHeader}</p>
                             {content.bailPara}
                         </div>
-                    )}
+                    {/* )} */}
 
                     {/* Issue Date */}
                     <p className="warrant-paragraph" style={{ marginTop: '20px', textAlign: 'left', fontWeight: 'bold' }}>
