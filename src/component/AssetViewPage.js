@@ -7,10 +7,10 @@ const AssetViewPage = () => {
     const { id } = useParams();
     const [asset, setAsset] = useState(null);
     const [loading, setLoading] = useState(true);
-
+const api= process.env.REACT_APP_BACKEND_URL
 useEffect(() => {
     // DO NOT USE localhost here. Use the computer's IP.
-    axios.get(`http://172.16.174.181:5000/api/assets/${id}`)
+    axios.get(api+`/api/assets/${id}`)
         .then(res => setAsset(res.data))
         .catch((err) => {
             console.error("Connection to backend failed", err);
