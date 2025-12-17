@@ -5,9 +5,8 @@ import { QRCodeSVG } from 'qrcode.react';
 // --- CONFIGURATION ---
 // Base URL for your Node.js/Express backend
 
-const REACT_APP_BACKEND_URL=http://localhost:5000
-// const API_BASE_URL = process.env.REACT_APP_BACKEND_URL+'/api/assets'; 
-const API_BASE_URL = REACT_APP_BACKEND_URL+'/api/assets'; 
+
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL+'/api/assets'; 
 
 
 // Field definitions for the form and table, matching your backend API keys
