@@ -7,7 +7,12 @@ const AssetViewPage = () => {
     const { id } = useParams();
     const [asset, setAsset] = useState(null);
     const [loading, setLoading] = useState(true);
-const api= process.env.REACT_APP_BACKEND_URL
+
+REACT_APP_BACKEND_URL=http://localhost:5000
+
+// const api= process.env.REACT_APP_BACKEND_URL
+     const api= REACT_APP_BACKEND_URL
+
 useEffect(() => {
     // DO NOT USE localhost here. Use the computer's IP.
     axios.get(api+`/api/assets/${id}`)
