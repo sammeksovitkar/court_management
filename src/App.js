@@ -26,7 +26,7 @@ const App = () => {
     const navItems = [
         { id: 'dashboard', name: 'मुख्य डॅशबोर्ड (Dashboard)', icon: <BarChart2 size={20} /> },
         { id: 'applications', name: 'अर्ज व्यवस्थापन (Applications)', icon: <ClipboardList size={20} /> },
-        { id: 'schedule', name: 'सुनावणी वेळापत्रक (Schedule)', icon: <Calendar size={20} /> },
+        // { id: 'schedule', name: 'सुनावणी वेळापत्रक (Schedule)', icon: <Calendar size={20} /> },
         { id: 'stats', name: 'Library Management', icon: <BarChart2 size={20} /> },
         { id: 'staff', name: 'कर्मचारी व्यवस्थापन (Staff)', icon: <BarChart2 size={20} /> },
         //   { id: 'muddemal', name: 'मुद्देमाल व्यवस्थापन (Muddemal )', icon: <Users size={20} /> },
@@ -60,8 +60,8 @@ const App = () => {
         switch (currentPage) {
             case 'dashboard':
                 return <DashboardOverview />;
-            case 'schedule':
-                return <Placeholder title="सुनावणी वेळापत्रक (Hearing Schedule)" />;
+            // case 'schedule':
+            //     return <Placeholder title="सुनावणी वेळापत्रक (Hearing Schedule)" />;
             case 'stats':
                 return <Liabrary/>;
             case 'staff':
