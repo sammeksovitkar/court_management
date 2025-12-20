@@ -92,7 +92,7 @@ const MainDashboardLayout = () => {
 
             <div className={`fixed lg:relative w-64 min-h-screen bg-indigo-800 text-white z-20 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 shadow-2xl`}>
                 <div className="p-6 text-2xl font-extrabold border-b border-indigo-700 tracking-wider flex items-center bg-indigo-900">
-                    <Gavel className="mr-3 text-teal-400" size={28} /> मनमाड न्यायालय
+                    <Gavel className="mr-3 text-teal-400" size={28} /> न्यायालय
                 </div>
                 <nav className="p-4 space-y-2">
                     {navItems.map(item => (
@@ -125,14 +125,14 @@ const MainDashboardLayout = () => {
             <div className="flex-1 flex flex-col overflow-y-auto">
                 <header className="bg-white shadow-lg p-4 sticky top-0 z-10 flex items-center justify-between no-print border-b border-gray-200">
                     <button className="lg:hidden p-2 rounded-lg text-indigo-600 hover:bg-gray-100 transition" onClick={() => setIsSidebarOpen(!isSidebarOpen)}><Menu size={28} /></button>
-                    <h2 className="text-2xl font-bold text-gray-700 sm:ml-4">{navItems.find(item => item.id === currentPage)?.name || applicationForms.find(form => form.id === currentPage)?.name || 'मनमाड कोर्ट डॅशबोर्ड'}</h2>
+                    <h2 className="text-2xl font-bold text-gray-700 sm:ml-4">{navItems.find(item => item.id === currentPage)?.name || applicationForms.find(form => form.id === currentPage)?.name || 'कोर्ट डॅशबोर्ड'}</h2>
                     <div className="flex items-center space-x-3 cursor-pointer p-2 rounded-full hover:bg-gray-100 transition">
                         <UserCircle size={28} className="text-indigo-500" />
                         <span className="text-sm font-medium text-gray-700 hidden sm:inline">उपयोगकर्ता (User ID)</span>
                     </div>
                 </header>
                 <main className="flex-1 p-4 md:p-8">{renderContent()}</main>
-                <footer className="bg-white text-center p-3 text-xs text-gray-400 border-t mt-auto no-print">न्यायालयीन व्यवस्थापन प्रणाली &copy; {new Date().getFullYear()} | मनमाड न्यायिक जिल्हा.</footer>
+                <footer className="bg-white text-center p-3 text-xs text-gray-400 border-t mt-auto no-print">न्यायालयीन व्यवस्थापन प्रणाली &copy; {new Date().getFullYear()} |  न्यायिक जिल्हा.</footer>
             </div>
             {isSidebarOpen && <div className="fixed inset-0 bg-black opacity-50 z-10 lg:hidden" onClick={() => setIsSidebarOpen(false)}></div>}
         </div>
