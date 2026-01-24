@@ -39,7 +39,7 @@ function AddBookButton({ onBookAdded }) {
             <button 
                 onClick={() => setIsModalOpen(true)}
                 style={BUTTON_STYLE}
-                    disabled
+                    
             >
                 ➕ Add New Book
             </button>
