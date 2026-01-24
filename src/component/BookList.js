@@ -2,7 +2,9 @@
 import React from 'react';
 
 // 🔑 DISPLAY HEADERS
-const headers = ['Class', 'Book Name', 'Writer','Volume', 'Date', 'Price', 'Reader', 'Kapat', ];
+const headers = ['Class', 'Book Name', 'Writer','Volume', 'Date', 
+  // 'Price', 
+  'Reader', 'SrNo', ];
 const classOptions = ['All', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII(A)',"VII(B)","VII(C)"];
 
 // 🔑 MAP HEADERS → DATA KEYS
@@ -12,9 +14,9 @@ const dataKeyMap = {
   'Writer': 'Writer',
   'Volume': 'Volume',
   'Date': 'Date',
-  'Price': 'Book Price',
+  // 'Price': 'Book Price',
   'Reader': 'Reader',
-  'Kapat': 'Kapat',
+  'SrNo': 'SrNo',
   
 };
 
@@ -54,7 +56,7 @@ const tableContainerStyle = {
 };
 
 const thStyle = {
-  padding: '10px',
+  padding: '8px',
   borderBottom: '1px solid #ddd',
   backgroundColor: '#f8fafc',
   textAlign: 'left',
@@ -164,11 +166,11 @@ function BookList({
           <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white' }}>
             <thead>
               <tr>
-                <th style={{ ...thStyle, width: '60px', textAlign: 'center' }}>#</th>
+                {/* <th style={{ ...thStyle, width: '60px', textAlign: 'center' }}>S_No</th> */}
                 {headers.map(header => (
                   <th key={header} style={thStyle}>{header}</th>
                 ))}
-                <th style={{ ...thStyle, width: '150px', textAlign: 'center' }}>Actions</th>
+                <th style={{ ...thStyle, width: '100px', textAlign: 'center' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -183,13 +185,13 @@ function BookList({
                     onMouseEnter={e => e.currentTarget.style.backgroundColor = '#eef4ff'}
                     onMouseLeave={e => e.currentTarget.style.backgroundColor = index % 2 === 0 ? '#ffffff' : '#f9fafc'}
                   >
-                    <td style={{ ...tdStyle, textAlign: 'center' }}>{index + 1}</td>
+                    {/* <td style={{ ...tdStyle, textAlign: 'center' }}>{index + 1}</td> */}
                     {headers.map(header => {
                       const dataKey = dataKeyMap[header];
                       const displayValue = book[dataKey] ?? '';
                       return <td key={header} style={tdStyle}>{displayValue}</td>;
                     })}
-                    <td style={{ ...tdStyle, textAlign: 'center' }}>
+                    <td style={{ ...tdStyle, textAlign: 'center' ,display:"flex"}} >
                       <button
                         onClick={() => handleEditClick(book)}
                         style={{
@@ -197,7 +199,7 @@ function BookList({
                           padding: '6px 10px',
                           backgroundColor: '#ffc107',
                           color: '#000',
-                          fontSize: '13px',
+                          fontSize: '10px',
                         }}
                       >
                         ✏️ 
@@ -209,7 +211,7 @@ function BookList({
                           padding: '6px 10px',
                           backgroundColor: '#dc3545',
                           color: 'white',
-                          fontSize: '13px',
+                          fontSize: '10px',
                           marginLeft: '6px',
                         }}
                       >
