@@ -200,7 +200,7 @@ function BookList({
                           backgroundColor: '#ffc107',
                           color: '#000',
                           fontSize: '10px',
-                          disabled
+                          
                         }}
                       >
                         ✏️ 
