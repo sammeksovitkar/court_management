@@ -200,6 +200,7 @@ function BookList({
                           backgroundColor: '#ffc107',
                           color: '#000',
                           fontSize: '10px',
+                          disabled
                         }}
                       >
                         ✏️ 
@@ -214,6 +215,7 @@ function BookList({
                           fontSize: '10px',
                           marginLeft: '6px',
                         }}
+                          disabled
                       >
                         🗑️ 
                       </button>
