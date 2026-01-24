@@ -1,51 +1,84 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { ShieldCheck, Landmark, User, Package } from 'lucide-react';
+import { ShieldCheck, Calendar, User, Tag, Scale, Hash } from 'lucide-react';
 
 const AssetViewPage = () => {
     const { id } = useParams();
     const [asset, setAsset] = useState(null);
     const [loading, setLoading] = useState(true);
+    const api = process.env.REACT_APP_BACKEND_URL;
 
+    useEffect(() => {
+        axios.get(`${api}/api/assets/${id}`)
+            .then(res => setAsset(res.data))
+            .catch((err) => {
+                console.error("Connection to backend failed", err);
+                setAsset(null);
+            })
+            .finally(() => setLoading(false));
+    }, [id, api]);
 
- const api= process.env.REACT_APP_BACKEND_URL
+    if (loading) return <div className="p-20 text-center font-bold text-slate-600">लोड होत आहे... (Loading...)</div>;
+    if (!asset) return <div className="p-20 text-center text-red-500 font-bold">माहिती सापडली नाही! (Data Not Found)</div>;
 
-useEffect(() => {
-    // DO NOT USE localhost here. Use the computer's IP.
-    axios.get(api+`/api/assets/${id}`)
-        .then(res => setAsset(res.data))
-        .catch((err) => {
-            console.error("Connection to backend failed", err);
-            setAsset(null);
-        })
-        .finally(() => setLoading(false));
-}, [id]);
-
-    if (loading) return <div className="p-20 text-center font-bold">लोड होत आहे...</div>;
-    if (!asset) return <div className="p-20 text-center text-red-500 font-bold">माहिती सापडली नाही!</div>;
+    // Helper component for detail rows
+    const DetailRow = ({ icon: Icon, label, value }) => (
+        <div className="flex items-start space-x-3 border-b border-slate-100 pb-3">
+            <Icon className="text-indigo-500 mt-1" size={18} />
+            <div>
+                <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">{label}</p>
+                <p className="text-slate-800 font-medium">{value || '---'}</p>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-slate-100 p-4 flex items-center justify-center">
-            <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-                <div className="bg-indigo-700 p-6 text-white text-center">
-                    <ShieldCheck size={48} className="mx-auto mb-2 text-teal-400" />
-                    <h1 className="text-xl font-bold">मुद्देमाल माहिती</h1>
-                    <p className="text-xs">ID: {asset.gmrVmrNo}</p>
+        <div className="min-h-screen bg-slate-100 p-4 md:p-8 flex items-center justify-center">
+            <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
+                
+                {/* Header Section */}
+                <div className="bg-indigo-800 p-8 text-white text-center relative">
+                    <div className="absolute top-4 right-4 bg-teal-400 text-indigo-900 text-[10px] font-bold px-2 py-1 rounded-full">
+                        OFFICIAL RECORD
+                    </div>
+                    <ShieldCheck size={56} className="mx-auto mb-3 text-teal-300" />
+                    <h1 className="text-2xl font-black tracking-tight">मुद्देमाल माहिती</h1>
+                    <p className="opacity-80 text-sm mt-1">GMR/VMR: {asset.gmrVmrNo}</p>
                 </div>
-                <div className="p-6 space-y-4">
-                    <div className="flex justify-between border-b pb-2 text-sm">
-                        <span className="text-slate-500">केस क्रमांक:</span>
-                        <span className="font-bold">{asset.caseNo}</span>
+
+                {/* Main Content Grid */}
+                <div className="p-6 md:p-8 space-y-5">
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <DetailRow icon={Hash} label="केस क्रमांक (Case No)" value={asset.caseNo} />
+                        <DetailRow icon={User} label="फिर्यादीचे नांव" value={asset.firyadicheName} />
+                        <DetailRow icon={Scale} label="आरोपीचे नांव" value={asset.aropicheName} />
+                        <DetailRow icon={Tag} label="किंमत (Value)" value={asset.kimmat} />
                     </div>
-                    <div className="flex justify-between border-b pb-2 text-sm">
-                        <span className="text-slate-500">फिर्यादी:</span>
-                        <span className="font-bold">{asset.firyadicheName}</span>
+
+                    <hr className="border-slate-100" />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <DetailRow icon={Calendar} label="पुढील तारीख (Next Date)" value={asset.nextDate} />
+                        <DetailRow icon={Calendar} label="निकाल तारीख (Decided Date)" value={asset.decidedDate} />
                     </div>
-                    <div className="bg-slate-50 p-3 rounded text-sm">
-                        <p className="text-slate-400 font-bold uppercase text-[10px]">वर्णन</p>
-                        <p className="text-slate-700 italic">"{asset.varnan}"</p>
+
+                    {/* Description Box */}
+                    <div className="bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                        <p className="text-[10px] uppercase font-bold text-indigo-400 mb-1">वर्णन (Description)</p>
+                        <p className="text-slate-700 leading-relaxed italic">
+                            {asset.varnan ? `"${asset.varnan}"` : "वर्णन उपलब्ध नाही."}
+                        </p>
                     </div>
+
+                </div>
+
+                {/* Footer */}
+                <div className="bg-slate-50 p-4 text-center border-t border-slate-100">
+                    <p className="text-[10px] text-slate-400 uppercase font-semibold tracking-widest">
+                        Generated by Police Asset Management System
+                    </p>
                 </div>
             </div>
         </div>
