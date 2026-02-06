@@ -22,8 +22,8 @@ const initialFormData = {
   courtLocationEnglish: "Manmad City Court, Tq. Nandgaon Dist Nashik",
   policeStation: 'पोलीस निरीक्षक,मनमाड शहर पोलीस स्टेशन ',
   court: "न्यायदंडाधिकारी प्रथमवर्ग,",
-  witnesses: [
-    { name: '', address: '' },
+witnesses: [
+    { srNo: "1", name: '', address: '' } // 👈 Ensure srNo is defined here
   ],
 };
 const actOptions = [
@@ -130,17 +130,18 @@ const PrintLayout = React.memo(({ data, printLanguage }) => {
     }
     return null;
   }, []);
-
-  const renderWitnessRows = useCallback((type) => {
-    const tableHeaderNameKey = type === 'साक्षीदारास समन्स' ? 'table_header_name' : 'table_header_accused_name';
+const renderWitnessRows = useCallback((type) => {
     const parties = witnesses.filter(w => w.name || w.address);
     if (parties.length === 0) {
       return (<tr key="no-witness"><td colSpan="3" style={{ textAlign: 'center' }}>{t('no_witness')}</td></tr>);
     }
 
     return parties.map((witness, index) => (
-      <tr key={index + 1}>
-        <td style={{ textAlign: 'center', width: '5%' }}>{index + 1}</td>
+      <tr key={index}>
+        {/* Change index + 1 to witness.srNo to show your manual edits in print */}
+        <td style={{ textAlign: 'center', width: '5%' }}>
+          {witness.srNo || index + 1} 
+        </td>
         <td style={{ width: '40%' }}>
           <span className="data-placeholder">{witness.name || '.....................'}</span>
         </td>
@@ -363,22 +364,22 @@ const SummonsFormApp = () => {
     }));
   };
 
-  const handleWitnessChange = (index, field, value) => {
-    const newWitnesses = formData.witnesses.map((witness, i) => {
-      if (i === index) {
-        return { ...witness, [field]: value };
-      }
-      return witness;
-    });
-    setFormData((prev) => ({ ...prev, witnesses: newWitnesses }));
-  };
+  // const handleWitnessChange = (index, field, value) => {
+  //   const newWitnesses = formData.witnesses.map((witness, i) => {
+  //     if (i === index) {
+  //       return { ...witness, [field]: value };
+  //     }
+  //     return witness;
+  //   });
+  //   setFormData((prev) => ({ ...prev, witnesses: newWitnesses }));
+  // };
 
-  const handleAddWitness = () => {
-    setFormData(prev => ({
-      ...prev,
-      witnesses: [...prev.witnesses, { name: '', address: '' }]
-    }));
-  };
+  // const handleAddWitness = () => {
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     witnesses: [...prev.witnesses, { name: '', address: '' }]
+  //   }));
+  // };
 
   const handleFormTypeChange = (type) => {
     setFormData(prev => ({
@@ -394,6 +395,73 @@ const SummonsFormApp = () => {
       caseNo: ''
     }));
   };
+
+
+  // Update Witness Change to handle manual Serial Number edits
+  // const handleWitnessChange = (index, field, value) => {
+  //   const newWitnesses = formData.witnesses.map((witness, i) => {
+  //     if (i === index) {
+  //       return { ...witness, [field]: value };
+  //     }
+  //     return witness;
+  //   });
+  //   setFormData((prev) => ({ ...prev, witnesses: newWitnesses }));
+  // };
+
+  // NEW: Handle Row Deletion
+// const handleDeleteWitness = (index) => {
+//   setFormData(prev => {
+//     const updatedWitnesses = prev.witnesses.filter((_, i) => i !== index);
+    
+//     // Optional: Re-calculate remaining numbers so they stay 1, 2, 3...
+//     // Remove the .map line below if you want deleted numbers to stay "gapped"
+//     const renumberedWitnesses = updatedWitnesses.map((w, i) => ({ ...w, srNo: i + 1 }));
+    
+//     return { ...prev, witnesses: renumberedWitnesses };
+//   });
+// };
+
+  // const handleAddWitness = () => {
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     witnesses: [...prev.witnesses, { srNo: prev.witnesses.length + 1, name: '', address: '' }]
+  //   }));
+  // };
+
+  // 1. Updated to handle manual edits for any field including srNo
+const handleWitnessChange = (index, field, value) => {
+  const newWitnesses = formData.witnesses.map((witness, i) => {
+    if (i === index) {
+      return { ...witness, [field]: value };
+    }
+    return witness;
+  });
+  setFormData((prev) => ({ ...prev, witnesses: newWitnesses }));
+};
+
+// 2. Add Witness with a default next number
+const handleAddWitness = () => {
+  setFormData(prev => ({
+    ...prev,
+    witnesses: [
+      ...prev.witnesses, 
+      { srNo: (prev.witnesses.length + 1).toString(), name: '', address: '' }
+    ]
+  }));
+};
+
+// 3. Delete Row and re-calculate SR Numbers
+const handleDeleteWitness = (index) => {
+  setFormData(prev => {
+    const filtered = prev.witnesses.filter((_, i) => i !== index);
+    // This re-sequences the numbers 1, 2, 3... after a deletion
+    const reSequenced = filtered.map((w, i) => ({
+      ...w,
+      srNo: (i + 1).toString()
+    }));
+    return { ...prev, witnesses: reSequenced };
+  });
+};
 
   const handlePrintLanguageChange = (lang) => {
     setPrintLanguage(lang);
@@ -816,45 +884,63 @@ const SummonsFormApp = () => {
 
 
         {/* साक्षदार यादी */}
-        <>
-          <h3 className="text-xl font-semibold mt-6 mb-4 text-purple-700">४. {formData.formType} नांव</h3>
-          <table className="witness-input-table">
-            <thead>
-              <tr>
-                <th style={{ width: '10%' }}>अ.क्र</th>
-                <th style={{ width: '45%' }}>{formData.formType} नांव</th>
-                <th style={{ width: '45%' }}>राहणार (पत्ता)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {formData.witnesses.map((witness, index) => (
-                <tr key={index}>
-                  <td className="text-center">{index + 1}</td>
-                  <td>
-                    <input
-                      type="text"
-                      value={witness.name}
-                      onChange={(e) => handleWitnessChange(index, 'name', e.target.value)}
-                      placeholder="साक्षीदाराचे नांव"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={witness.address}
-                      onChange={(e) => handleWitnessChange(index, 'address', e.target.value)}
-                      placeholder="पत्ता"
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <button onClick={handleAddWitness} className="add-button">
-            + साक्षदार जोडा
+     {/* साक्षदार यादी */}
+<>
+<h3 className="text-xl font-semibold mt-6 mb-4 text-purple-700">४. {formData.formType} नांव</h3>
+<table className="witness-input-table">
+  <thead>
+    <tr>
+      <th style={{ width: '10%' }}>अ.क्र</th>
+      <th style={{ width: '40%' }}>{formData.formType} नांव</th>
+      <th style={{ width: '40%' }}>राहणार (पत्ता)</th>
+      <th style={{ width: '10%', textAlign: 'center' }}>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {formData.witnesses.map((witness, index) => (
+      <tr key={index}>
+        <td className="p-0">
+          <input
+            type="text"
+            className="text-center font-bold"
+            style={{ width: '100%', padding: '8px', border: 'none', outline: 'none' }}
+            value={witness.srNo}
+            onChange={(e) => handleWitnessChange(index, 'srNo', e.target.value)}
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            value={witness.name}
+            onChange={(e) => handleWitnessChange(index, 'name', e.target.value)}
+            placeholder="नांव"
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            value={witness.address}
+            onChange={(e) => handleWitnessChange(index, 'address', e.target.value)}
+            placeholder="पत्ता"
+          />
+        </td>
+        <td className="text-center">
+          <button 
+            onClick={() => handleDeleteWitness(index)}
+            className="text-red-600 hover:text-red-800 font-bold px-2 py-1"
+            type="button"
+          >
+            🗑️
           </button>
-        </>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+<button onClick={handleAddWitness} className="add-button">
+  + {formData.formType} जोडा
+</button></>
 
         {/* आजची तारीख */}
         <div className="input-group" style={{ marginTop: '30px' }}>
