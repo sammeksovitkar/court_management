@@ -68,16 +68,21 @@ function Liabrary() {
     };
 
     // --- 4. Action Handlers ---
-    const handleDelete = async (srNo) => {
-        if (!window.confirm(`Are you sure you want to delete book: ${srNo}?`)) return;
-        try {
-            await axios.delete(`${api}/api/books/${srNo}`);
-            alert('Deleted successfully');
-            fetchBooks(); 
-        } catch (error) {
-            console.error('Delete error:', error);
-        }
-    };
+// Change 'srNo' to 'id' (the row number)
+const handleDelete = async (id, bookName) => {
+    // It's better to show the Book Name in the confirm box
+    if (!window.confirm(`Are you sure you want to delete: ${bookName}?`)) return;
+    
+    try {
+        // This will now send something like /api/books/2
+        await axios.delete(`${api}/api/books/${id}`);
+        alert('Deleted successfully');
+        fetchBooks(); 
+    } catch (error) {
+        console.error('Delete error:', error.response?.data || error.message);
+        alert('Failed to delete. Check console for details.');
+    }
+};
     
     const handleEditClick = (book) => {
         setBookToEdit(book);
