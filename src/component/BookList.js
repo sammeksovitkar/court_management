@@ -215,7 +215,7 @@ function BookList({
                           fontSize: '10px',
                           marginLeft: '6px',
                         }}
-                          disabled
+                          // disabled
                       >
                         🗑️ 
                       </button>
