@@ -191,20 +191,20 @@ const MuddemalManagement = () => {
     const [currentAsset, setCurrentAsset] = useState(null); // Asset data for editing/viewing
 
     // API call to fetch all assets from the backend
-    const fetchAssets = async () => {
-        setIsLoading(true);
-        try {
-            const response = await axios.get(API_BASE_URL); 
-            // The data structure returned by GET /api/assets is { assets: [...] }
-            setAssets(response.data.assets || []); 
-        } catch (error) {
-            console.error('Error fetching assets:', error);
-            alert('Failed to fetch assets. Check console and backend API status.');
-            setAssets([]); // Clear list on error
-        } finally {
-            setIsLoading(false);
-        }
-    };
+const fetchAssets = async () => {
+    setIsLoading(true);
+    try {
+        const response = await axios.get(API_BASE_URL); 
+        // Check if it's already an array, or if it's wrapped in an 'assets' property
+        const data = Array.isArray(response.data) ? response.data : (response.data.assets || []);
+        setAssets(data); 
+    } catch (error) {
+        console.error('Error fetching assets:', error);
+        setAssets([]); 
+    } finally {
+        setIsLoading(false);
+    }
+};
 
     useEffect(() => {
         fetchAssets();
