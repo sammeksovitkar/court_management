@@ -235,7 +235,7 @@ export function BookForm({ initialBook = null, onBookAdded, onClose, onBookUpdat
           type="submit"
           style={{ ...SUBMIT_BUTTON_STYLE, opacity: isSubmitting ? 0.6 : 1 }}
           // disabled={isSubmitting}
-disabled
+// disabled
         >
           {isSubmitting ? 'Processing...' : buttonText}
         </button>
