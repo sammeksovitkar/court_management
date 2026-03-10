@@ -19,7 +19,7 @@ const CourtRegister = () => {
     const [showStampModal, setShowStampModal] = useState(false);
     const [stampAmount, setStampAmount] = useState("");
 
-    const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+    const BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000/api";
     const getTodayDate = () => new Date().toISOString().split('T')[0];
     const sectionOptions = ["Statistical", "Computer", "EST", "Building", "HighCourt", "Legal Aid", "Police Station", "Other"];
 
