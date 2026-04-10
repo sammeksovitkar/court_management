@@ -275,7 +275,9 @@ const AccusedSummonsApp = () => {
           
           /* --- PRINT STYLES (CRITICAL FOR A4 FORMAT) --- */
           @media print {
-            
+             header {
+    display: none !important;
+  }
             /* 1. Universal Cleanup: Removes all shadows and backgrounds */
             * {
                 box-shadow: none !important;
